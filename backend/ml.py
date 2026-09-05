@@ -132,8 +132,11 @@ def polygons_to_mask(polygons, size):
 
 
 def generate_and_store(dataset_id: str, ext: str, size, planes: list,
-                       occlusions: list, notes: str) -> dict:
-    """Generate per-plane masks (255/0), merged mask, and meta JSON; upload to storage."""
+                       occlusions: list, notes: str, view_type: str = None,
+                       coordinate_space: str = "exif_applied_display") -> dict:
+    """Generate per-plane masks (255/0), merged mask, and spec-compliant meta JSON.
+    Masks are generated in the EXIF-applied display coordinate space (same pixels the
+    annotator saw and the browser rendered), so image and mask never misalign."""
     w, h = size
     merged = np.zeros((h, w), np.uint8)
     plane_records = []
@@ -142,17 +145,23 @@ def generate_and_store(dataset_id: str, ext: str, size, planes: list,
     for idx, plane in enumerate(planes, start=1):
         is_parapet = bool(plane.get("is_parapet"))
         suffix = "-parapet" if is_parapet else ""
-        fname = f"plane-{idx:02d}{suffix}.png"
+        plane_id = f"plane-{idx:02d}"
+        fname = f"{plane_id}{suffix}.png"
         mask_img = polygons_to_mask(plane.get("polygons", []), (w, h))
         buf = io.BytesIO()
         mask_img.save(buf, format="PNG")
         storage.put_object(config.plane_path(dataset_id, fname), buf.getvalue(), "image/png")
         merged = np.maximum(merged, np.array(mask_img))
-        rec = {"index": idx, "name": plane.get("name", f"plane-{idx:02d}"),
-               "file": fname, "is_parapet": is_parapet}
+        rec = {
+            "index": idx, "plane_id": plane_id, "name": plane.get("name", plane_id),
+            "file": fname, "is_parapet": is_parapet,
+            "generation_method": plane.get("generation_method", "manual_polygon"),
+            "human_corrected": bool(plane.get("human_corrected", True)),
+            "human_approved": True,
+        }
         plane_records.append(rec)
         if is_parapet:
-            parapets.append(fname)
+            parapets.append(plane_id)  # spec: "parapets": ["plane-02"]
 
     merged_buf = io.BytesIO()
     Image.fromarray(merged).save(merged_buf, format="PNG")
@@ -160,10 +169,14 @@ def generate_and_store(dataset_id: str, ext: str, size, planes: list,
 
     meta = {
         "file": f"{dataset_id}.{ext}",
-        "occlusions": occlusions or [],
-        "parapets": parapets,
+        "occlusions": occlusions or [],   # spec: [{type, bbox:[x0,y0,x1,y1] normalized, hides:[plane-NN]}]
+        "parapets": parapets,             # spec: ["plane-02"]
         "notes": notes or "",
+        "view_type": view_type or "uncertain",
         "planes": plane_records,
+        "spec_version": "roofline-labeling-spec-v1",
+        "coordinate_space": coordinate_space,
+        "image_size": {"width": w, "height": h},
     }
     storage.put_object(config.meta_path(dataset_id),
                        json.dumps(meta, indent=2).encode(), "application/json")

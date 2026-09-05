@@ -7,10 +7,11 @@ import {
 } from "lucide-react";
 import {
   getImage, getAnnotation, saveAnnotation, approveAnnotation, markNeedsReview,
-  propose, rawImageUrl, PLANE_COLORS,
+  propose, rawImageUrl, PLANE_COLORS, getSpecChecklist,
 } from "@/lib/api";
 
-const OCCLUSION_TYPES = ["tree", "chimney", "shadow", "solar_panel", "antenna", "other"];
+const OCCLUSION_TYPES = ["palm", "tree", "shrub", "wire", "vehicle", "neighbor_structure", "other"];
+const VIEW_TYPES = ["frontal", "oblique", "side", "rear", "uncertain"];
 
 function hexToRgba(hex, a) {
   const n = parseInt(hex.slice(1), 16);
@@ -42,6 +43,8 @@ export default function AnnotationWorkspace({
   const [showOverlay, setShowOverlay] = useState(true);
   const [notes, setNotes] = useState("");
   const [checklist, setChecklist] = useState({});
+  const [viewType, setViewType] = useState("uncertain");
+  const [spec, setSpec] = useState(null);
   const [status, setStatus] = useState("pending");
   const [proposing, setProposing] = useState(false);
   const [saveState, setSaveState] = useState("idle");
@@ -49,6 +52,8 @@ export default function AnnotationWorkspace({
   const [showShortcuts, setShowShortcuts] = useState(false);
 
   const idx = orderedIds.indexOf(activeId);
+
+  useEffect(() => { getSpecChecklist().then(setSpec).catch(() => {}); }, []);
 
   // ---------- load ----------
   useEffect(() => {
@@ -62,11 +67,20 @@ export default function AnnotationWorkspace({
       setOcclusions(ann.occlusions || []);
       setNotes(ann.notes || "");
       setChecklist(ann.checklist || {});
+      setViewType(ann.view_type || "uncertain");
       setStatus(ann.status || im.status || "pending");
       setActivePlane((ann.planes && ann.planes[0]?.id) || null);
       const image = new Image();
-      image.crossOrigin = "anonymous";
-      image.onload = () => { imgRef.current = image; setImgLoaded(true); fitView(); };
+      image.onload = () => {
+        imgRef.current = image;
+        // Re-apply canvas physical size (mimic resize handler). On initial mount
+        // the useLayoutEffect resize can race with layout so canvas ends up
+        // black until the user resizes the window. Force a resize-refresh here.
+        const c = canvasRef.current, w = wrapRef.current;
+        if (c && w) { c.width = w.clientWidth; c.height = w.clientHeight; }
+        setImgLoaded(true);
+        fitView();
+      };
       image.src = rawImageUrl(activeId);
     });
     // eslint-disable-next-line
@@ -78,13 +92,13 @@ export default function AnnotationWorkspace({
     if (!activeId) return;
     setSaveState("saving");
     const t = setTimeout(() => {
-      saveAnnotation(activeId, { planes, occlusions, notes, checklist, status })
+      saveAnnotation(activeId, { planes, occlusions, notes, checklist, viewType, view_type: viewType, status })
         .then(() => setSaveState("saved"))
         .catch(() => setSaveState("idle"));
     }, 700);
     return () => clearTimeout(t);
     // eslint-disable-next-line
-  }, [planes, occlusions, notes, checklist]);
+  }, [planes, occlusions, notes, checklist, viewType]);
 
   // ---------- canvas sizing ----------
   useLayoutEffect(() => {
@@ -202,6 +216,7 @@ export default function AnnotationWorkspace({
     id: uid(), name: `Plane ${planes.length + 1}`,
     color: PLANE_COLORS[planes.length % PLANE_COLORS.length],
     is_parapet: false, polygons: [],
+    generation_method: "manual_polygon", human_corrected: true,
   });
   const addPlane = () => {
     const np = newPlaneObj();
@@ -224,8 +239,10 @@ export default function AnnotationWorkspace({
     try {
       const res = await propose({ dataset_id: activeId, positive_points: [[Math.round(pt[0]), Math.round(pt[1])]] });
       if (!res.polygons?.length) { toast.warning("No region found — try another point or adjust."); return; }
+      const method = res.backend === "sam2_cuda" ? "sam2_point_prompt" : "cpu_fallback_assist";
+      updatePlane(ap.id, { generation_method: method });
       setPlanePolys(ap.id, [...(ap.polygons || []), ...res.polygons]);
-      toast.success(res.backend === "sam2_cuda" ? "SAM2 proposal added" : "CPU-assist proposal added (not SAM2)");
+      toast.success(res.backend === "sam2_cuda" ? "SAM2 proposal added" : "CPU-assist proposal added (NOT SAM2)");
     } catch (e) {
       toast.error("Proposal failed");
     } finally {
@@ -287,8 +304,16 @@ export default function AnnotationWorkspace({
     setDraft([]);
   };
   const addOcclusion = (type, hides) => {
-    if (!pendingBox) return;
-    setOcclusions((o) => [...o, { type, hides: hides || "", bbox: [Math.round(pendingBox.x), Math.round(pendingBox.y), Math.round(pendingBox.w), Math.round(pendingBox.h)] }]);
+    if (!pendingBox || !meta) return;
+    const W = meta.width, H = meta.height;
+    const x0 = pendingBox.x / W, y0 = pendingBox.y / H;
+    const x1 = (pendingBox.x + pendingBox.w) / W, y1 = (pendingBox.y + pendingBox.h) / H;
+    const round4 = (v) => Math.round(Math.min(1, Math.max(0, v)) * 1e4) / 1e4;
+    setOcclusions((o) => [...o, {
+      type,
+      bbox: [round4(x0), round4(y0), round4(x1), round4(y1)],
+      hides: hides || [],
+    }]);
     setPendingBox(null);
   };
 
@@ -300,7 +325,7 @@ export default function AnnotationWorkspace({
   const doApprove = async () => {
     if (!planes.length) { toast.error("Add at least one roof plane before approving."); return; }
     try {
-      await approveAnnotation(activeId, { planes, occlusions, notes, checklist });
+      await approveAnnotation(activeId, { planes, occlusions, notes, checklist, view_type: viewType });
       setStatus("approved");
       toast.success("Approved · merged mask + per-plane masks + metadata generated");
       onStatusChange?.();
@@ -474,8 +499,8 @@ export default function AnnotationWorkspace({
           {/* occlusion pending form */}
           {pendingBox && (
             <div className="p-3 border-t border-slate-800" data-testid="occlusion-form">
-              <div className="text-xs font-mono uppercase text-slate-500 mb-2">New occlusion</div>
-              <OcclusionForm onAdd={addOcclusion} onCancel={() => setPendingBox(null)} />
+              <div className="text-xs font-mono uppercase text-slate-500 mb-2">New occlusion (normalized bbox)</div>
+              <OcclusionForm planes={planes} onAdd={addOcclusion} onCancel={() => setPendingBox(null)} />
             </div>
           )}
 
@@ -485,7 +510,9 @@ export default function AnnotationWorkspace({
               {occlusions.map((o, i) => (
                 <div key={i} className="flex items-center justify-between text-xs py-1">
                   <span className="text-amber-300">{o.type}</span>
-                  <span className="text-slate-500 font-mono">{o.hides}</span>
+                  <span className="text-slate-500 font-mono truncate max-w-[110px]">
+                    {(o.hides || []).join(",") || "—"}
+                  </span>
                   <button onClick={() => setOcclusions((arr) => arr.filter((_, j) => j !== i))}
                     className="text-slate-500 hover:text-rose-400"><Trash2 className="w-3 h-3" /></button>
                 </div>
@@ -493,22 +520,30 @@ export default function AnnotationWorkspace({
             </div>
           )}
 
-          {/* checklist */}
+          {/* view type */}
           <div className="p-3 border-t border-slate-800">
-            <div className="text-xs font-mono uppercase text-slate-500 mb-2">QA checklist (spec)</div>
-            {[
-              ["eave_verified", "Eave = gutter lip / drip edge (not fascia/soffit/shingle)"],
-              ["gable_excluded", "Gable wall excluded"],
-              ["planes_separated", "Planes properly separated"],
-              ["occlusion_under_15", "Occlusion < 15% rule applied"],
-            ].map(([k, label]) => (
-              <label key={k} className="flex items-start gap-2 text-xs text-slate-400 py-1 cursor-pointer">
-                <input type="checkbox" data-testid={`check-${k}`} checked={!!checklist[k]}
-                  onChange={(e) => setChecklist((c) => ({ ...c, [k]: e.target.checked }))}
-                  className="accent-emerald-500 mt-0.5" />
-                {label}
-              </label>
-            ))}
+            <div className="text-xs font-mono uppercase text-slate-500 mb-2">View type (diagnostic — does NOT change labeling rules)</div>
+            <select data-testid="view-type" value={viewType} onChange={(e) => setViewType(e.target.value)}
+              className="w-full bg-[#111827] border border-slate-800 rounded-md p-1.5 text-sm">
+              {VIEW_TYPES.map((v) => <option key={v} value={v}>{v}</option>)}
+            </select>
+          </div>
+
+          {/* checklist — driven by client spec */}
+          <div className="p-3 border-t border-slate-800">
+            <div className="text-xs font-mono uppercase text-slate-500 mb-2">
+              Spec checklist {spec?.spec_version ? `· ${spec.spec_version}` : ""}
+            </div>
+            <div className="max-h-56 overflow-y-auto pr-1">
+              {(spec?.checklist || []).map((item) => (
+                <label key={item.id} className="flex items-start gap-2 text-xs text-slate-400 py-1 cursor-pointer">
+                  <input type="checkbox" data-testid={`check-${item.id}`} checked={!!checklist[item.id]}
+                    onChange={(e) => setChecklist((c) => ({ ...c, [item.id]: e.target.checked }))}
+                    className="accent-emerald-500 mt-0.5 shrink-0" />
+                  {item.text}
+                </label>
+              ))}
+            </div>
           </div>
 
           <div className="p-3 border-t border-slate-800">
@@ -538,17 +573,28 @@ function StatusPill({ status }) {
   );
 }
 
-function OcclusionForm({ onAdd, onCancel }) {
+function OcclusionForm({ planes, onAdd, onCancel }) {
   const [type, setType] = useState(OCCLUSION_TYPES[0]);
-  const [hides, setHides] = useState("");
+  const [hides, setHides] = useState([]);
+  const planeIds = (planes || []).map((_, i) => `plane-${String(i + 1).padStart(2, "0")}`);
+  const toggleHide = (pid) => setHides((h) => (h.includes(pid) ? h.filter((x) => x !== pid) : [...h, pid]));
   return (
     <div className="space-y-2">
       <select value={type} onChange={(e) => setType(e.target.value)} data-testid="occlusion-type"
         className="w-full bg-[#111827] border border-slate-800 rounded-md p-1.5 text-sm">
         {OCCLUSION_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
       </select>
-      <input value={hides} onChange={(e) => setHides(e.target.value)} placeholder="hides (e.g. plane-02 edge)"
-        data-testid="occlusion-hides" className="w-full bg-[#111827] border border-slate-800 rounded-md p-1.5 text-sm" />
+      <div className="text-[11px] text-slate-500">hides planes:</div>
+      <div className="flex flex-wrap gap-1" data-testid="occlusion-hides">
+        {planeIds.length === 0 && <span className="text-[11px] text-slate-600">no planes yet</span>}
+        {planeIds.map((pid) => (
+          <button key={pid} onClick={() => toggleHide(pid)}
+            className={`px-1.5 py-0.5 rounded text-[10px] font-mono border ${hides.includes(pid)
+              ? "bg-amber-500/25 border-amber-500/50 text-amber-200" : "bg-slate-800 border-slate-700 text-slate-400"}`}>
+            {pid}
+          </button>
+        ))}
+      </div>
       <div className="flex gap-2">
         <button data-testid="occlusion-add" onClick={() => onAdd(type, hides)}
           className="flex-1 px-2 py-1.5 rounded-md bg-amber-500/20 border border-amber-500/40 text-amber-300 text-xs">Add</button>

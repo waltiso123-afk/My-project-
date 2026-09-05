@@ -1,41 +1,36 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Network, Merge, AlertTriangle, Layers, Info } from "lucide-react";
-import { getHouseGroups, getCandidates, mergeGroups, rawImageUrl } from "@/lib/api";
+import { Network, AlertTriangle, Layers, Info, Check, X, HelpCircle } from "lucide-react";
+import { getHouseGroups, getPairs, rulePair, rawImageUrl } from "@/lib/api";
+
+const RULING_STYLE = {
+  same: "bg-emerald-500/20 border-emerald-500/50 text-emerald-300",
+  different: "bg-slate-700/50 border-slate-600 text-slate-300",
+  unsure: "bg-amber-500/20 border-amber-500/50 text-amber-300",
+};
 
 export default function HouseGroupManager() {
   const [groups, setGroups] = useState([]);
-  const [candidates, setCandidates] = useState([]);
-  const [minInliers, setMinInliers] = useState(12);
-  const [selected, setSelected] = useState(new Set());
-  const [merging, setMerging] = useState(false);
+  const [pairs, setPairs] = useState([]);
+  const [busy, setBusy] = useState(false);
 
   const load = () => {
     getHouseGroups(false).then(setGroups).catch(() => {});
-    getCandidates(minInliers).then((d) => setCandidates(d.candidates || [])).catch(() => {});
+    getPairs().then((d) => setPairs(d.pairs || [])).catch(() => {});
   };
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [minInliers]);
+  useEffect(() => { load(); }, []);
 
   const multi = groups.filter((g) => g.size > 1);
-  const toggle = (id) => {
-    const s = new Set(selected);
-    s.has(id) ? s.delete(id) : s.add(id);
-    setSelected(s);
-  };
 
-  const doMerge = async (ids) => {
-    if (ids.length < 2) return;
-    setMerging(true);
+  const rule = async (p, ruling) => {
+    setBusy(true);
     try {
-      const res = await mergeGroups(ids);
-      toast.success(`Merged ${ids.length} images → ${res.group_id}. Split recomputed.`);
-      setSelected(new Set());
+      const res = await rulePair(p.image_a, p.image_b, ruling);
+      if (ruling === "same" && res.merged) toast.success(`Merged → ${res.group?.group_id}. Split recomputed.`);
+      else toast.success(`Ruling saved: ${ruling.toUpperCase()}`);
       load();
-    } catch (e) {
-      toast.error("Merge failed");
-    } finally {
-      setMerging(false);
-    }
+    } catch (e) { toast.error("Failed to save ruling"); }
+    finally { setBusy(false); }
   };
 
   return (
@@ -48,40 +43,35 @@ export default function HouseGroupManager() {
       <div className="p-4 rounded-lg bg-blue-950/30 border border-blue-500/30 text-sm text-slate-300 flex gap-3 mb-6">
         <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
         <div>
-          House groups are detected with a <b>real duplicate-property analysis</b>: ORB local
-          features + RANSAC homography geometric verification (robust to viewpoint/framing changes,
-          unlike perceptual hashing). Only pairs with <b>strong geometric evidence</b> (≥ 22 inliers)
-          are auto-grouped; borderline pairs are surfaced below as <b>candidates for your review</b>.
-          On this dataset the candidates turned out to be look-alike Florida homes (shared white stucco /
-          dark window frames / tile roofs), not the same property — so nothing was auto-merged.
-          Confirm a genuine multi-view match and the anti-leakage split recomputes automatically
-          (holdout stays fixed). Uncertainties are never resolved silently.
+          Groups are detected with <b>ORB local features + RANSAC homography</b> geometric verification.
+          This is <b>candidate evidence, not ground truth</b> — ORB can miss the same property across large
+          viewpoint/lighting/crop changes. Rule each pair below: <b>SAME</b> merges the pair and recomputes
+          the anti-leakage split; <b>DIFFERENT</b>/<b>UNSURE</b> are recorded without merging. Nothing is
+          auto-merged. Goal: minimise both false merges and false splits.
         </div>
       </div>
 
       {/* Confirmed multi-view groups */}
       <div className="mb-8">
         <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2">
-          <Layers className="w-4 h-4 text-emerald-400" /> Multi-view groups
+          <Layers className="w-4 h-4 text-emerald-400" /> Confirmed multi-view groups
           <span className="text-sm font-mono text-slate-500">({multi.length})</span>
         </h3>
         {multi.length === 0 ? (
           <div className="text-sm text-slate-500 p-4 rounded-lg border border-slate-800 bg-[#0B0F19]">
-            No multi-view groups yet — all {groups.length} images are singleton house_groups. Merge candidates below to create one.
+            None yet — all {groups.length} images are singleton house_groups. Rule a pair SAME to create one.
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
             {multi.map((g) => (
-              <div key={g.group_id} data-testid={`group-${g.group_id}`}
-                className="p-3 rounded-lg border border-slate-800 bg-[#111827]">
+              <div key={g.group_id} data-testid={`group-${g.group_id}`} className="p-3 rounded-lg border border-slate-800 bg-[#111827]">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-mono text-sm text-violet-300">{g.group_id}</span>
                   <span className="text-xs font-mono text-slate-500">{g.split} · {g.size} imgs</span>
                 </div>
                 <div className="flex gap-1.5 overflow-x-auto">
                   {g.image_ids.map((id) => (
-                    <img key={id} src={rawImageUrl(id)} alt={id}
-                      className="w-16 h-16 object-cover rounded border border-slate-700" />
+                    <img key={id} src={rawImageUrl(id)} alt={id} className="w-16 h-16 object-cover rounded border border-slate-700" />
                   ))}
                 </div>
               </div>
@@ -90,65 +80,69 @@ export default function HouseGroupManager() {
         )}
       </div>
 
-      {/* Candidate pairs */}
-      <div>
-        <div className="flex flex-wrap items-center gap-3 mb-3">
-          <h3 className="font-display text-lg font-semibold flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-amber-400" /> Review candidates
-            <span className="text-sm font-mono text-slate-500">({candidates.length})</span>
-          </h3>
-          <div className="ml-auto flex items-center gap-2 text-sm">
-            <span className="text-slate-500 font-mono text-xs">min inliers</span>
-            <input type="range" min="8" max="30" value={minInliers} data-testid="maxdist-slider"
-              onChange={(e) => setMinInliers(Number(e.target.value))} className="accent-blue-500" />
-            <span className="font-mono text-slate-300 w-6">{minInliers}</span>
-          </div>
-          {selected.size >= 2 && (
-            <button data-testid="merge-selected" disabled={merging}
-              onClick={() => doMerge([...selected])}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-500 hover:bg-violet-600 text-white text-sm font-medium">
-              <Merge className="w-4 h-4" /> Merge {selected.size} selected
-            </button>
-          )}
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {candidates.map((c) => {
-            const key = `${c.image_a}-${c.image_b}`;
-            return (
-              <div key={key} data-testid={`candidate-${key}`}
-                className="p-3 rounded-lg border border-slate-800 bg-[#111827]">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-mono text-slate-400">
-                    inliers <b className={c.strong ? "text-emerald-300" : "text-amber-300"}>{c.inliers}</b>
-                    <span className="text-slate-600"> · good {c.good_matches}</span>
-                    <span className="text-slate-600"> · {c.batch_a === "batch1" ? "B1" : "B2"}↔{c.batch_b === "batch1" ? "B1" : "B2"}</span>
+      {/* Candidate pairs with full metrics + rulings */}
+      <h3 className="font-display text-lg font-semibold mb-3 flex items-center gap-2">
+        <AlertTriangle className="w-4 h-4 text-amber-400" /> Candidate pairs — human review
+        <span className="text-sm font-mono text-slate-500">({pairs.length})</span>
+      </h3>
+      <div className="grid md:grid-cols-2 gap-4">
+        {pairs.map((p) => {
+          const key = `${p.image_a}-${p.image_b}`;
+          return (
+            <div key={key} data-testid={`candidate-${key}`} className="p-4 rounded-lg border border-slate-800 bg-[#111827]">
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {[[p.image_a, p.file_a, p.batch_a, p.orientation_a], [p.image_b, p.file_b, p.batch_b, p.orientation_b]].map(([id, file, batch, orient]) => (
+                  <div key={id} className="relative rounded overflow-hidden border border-slate-700">
+                    <img src={rawImageUrl(id)} alt={id} className="w-full h-32 object-cover" />
+                    <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/75 text-[10px] font-mono text-slate-200">
+                      {id} · {file}
+                    </span>
+                    <span className="absolute top-1 right-1 px-1.5 py-0.5 rounded bg-black/75 text-[9px] font-mono text-slate-400">
+                      {batch === "batch1" ? "B1" : "B2"} · {orient?.slice(0, 4)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="grid grid-cols-4 gap-2 text-center mb-3">
+                <Metric label="inliers" value={p.inliers} accent={p.strong ? "text-emerald-300" : "text-amber-300"} />
+                <Metric label="good match" value={p.raw_good_matches} />
+                <Metric label="ratio" value={p.inlier_ratio ?? "—"} />
+                <Metric label="kp a/b" value={`${p.keypoints_a ?? "?"}/${p.keypoints_b ?? "?"}`} />
+              </div>
+              <div className="flex items-center gap-2">
+                {p.ruling && (
+                  <span className={`px-2 py-1 rounded text-[11px] font-mono border ${RULING_STYLE[p.ruling]}`}>
+                    ruled: {p.ruling}
                   </span>
-                  <button
-                    data-testid={`merge-pair-${key}`}
-                    onClick={() => doMerge([c.image_a, c.image_b])}
-                    disabled={merging}
-                    className="text-xs px-2 py-1 rounded bg-violet-500/15 border border-violet-500/30 text-violet-300 hover:bg-violet-500/25">
-                    Merge pair
+                )}
+                <div className="ml-auto flex gap-1.5">
+                  <button data-testid={`rule-same-${key}`} disabled={busy} onClick={() => rule(p, "same")}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 text-xs hover:bg-emerald-500/25">
+                    <Check className="w-3.5 h-3.5" /> Same
+                  </button>
+                  <button data-testid={`rule-different-${key}`} disabled={busy} onClick={() => rule(p, "different")}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-slate-700/60 border border-slate-600 text-slate-300 text-xs hover:bg-slate-700">
+                    <X className="w-3.5 h-3.5" /> Different
+                  </button>
+                  <button data-testid={`rule-unsure-${key}`} disabled={busy} onClick={() => rule(p, "unsure")}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs hover:bg-amber-500/25">
+                    <HelpCircle className="w-3.5 h-3.5" /> Unsure
                   </button>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {[c.image_a, c.image_b].map((id) => (
-                    <button key={id} onClick={() => toggle(id)}
-                      className={`relative rounded overflow-hidden border-2 transition-colors ${
-                        selected.has(id) ? "border-blue-400" : "border-transparent"}`}>
-                      <img src={rawImageUrl(id)} alt={id} className="w-full h-24 object-cover" />
-                      <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/70 text-[10px] font-mono text-slate-200">
-                        {id}
-                      </span>
-                    </button>
-                  ))}
-                </div>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
+    </div>
+  );
+}
+
+function Metric({ label, value, accent = "text-slate-200" }) {
+  return (
+    <div className="rounded bg-[#0B0F19] border border-slate-800 py-1.5">
+      <div className={`font-mono text-sm ${accent}`}>{value}</div>
+      <div className="text-[9px] font-mono uppercase text-slate-600">{label}</div>
     </div>
   );
 }

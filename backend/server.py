@@ -12,6 +12,7 @@ import storage
 import ml
 import envreport
 import pipeline
+import spec_checklist
 
 mongo_url = os.environ["MONGO_URL"]
 client = AsyncIOMotorClient(mongo_url)
@@ -53,6 +54,19 @@ async def environment():
 @api.get("/ml/status")
 async def ml_status():
     return await run_in_threadpool(ml.sam2_status)
+
+
+@api.get("/spec/checklist")
+async def spec_check():
+    return {
+        "spec_loaded": True,
+        "spec_version": spec_checklist.SPEC_VERSION,
+        "reference_file": "/app/PROJECT_SPEC.md",
+        "checklist": spec_checklist.CHECKLIST,
+        "rules_meta": spec_checklist.RULES_META,
+        "occlusion_types": spec_checklist.OCCLUSION_TYPES,
+        "generation_methods": spec_checklist.GENERATION_METHODS,
+    }
 
 
 # ---------------- Dataset ----------------
@@ -184,6 +198,68 @@ async def merge_groups(payload: dict = Body(...)):
     return result
 
 
+_orb_kp_cache = {}
+
+
+def _orb_keypoint_count(dataset_id, batch, filename):
+    if dataset_id in _orb_kp_cache:
+        return _orb_kp_cache[dataset_id]
+    sub = "batch1" if batch == "batch1" else "batch2"
+    path = config.DATA_DIR / "staging" / sub / filename
+    try:
+        kp, des = pipeline._orb_features(path)
+        n = len(kp) if kp else 0
+    except Exception:
+        n = None
+    _orb_kp_cache[dataset_id] = n
+    return n
+
+
+@api.get("/housegroups/pairs")
+async def group_pairs_full():
+    """All ORB+RANSAC candidate pairs with full geometric metrics + any human ruling.
+    ORB/RANSAC is candidate evidence, NOT ground truth — the human rules on each pair."""
+    pairs = await db.group_pairs.find({}, CLEAN).sort("inliers", -1).to_list(500)
+    out = []
+    for gp in pairs:
+        a, b = gp["image_a"], gp["image_b"]
+        ia = await db.images.find_one({"dataset_id": a}, {"_id": 0, "batch": 1, "original_filename": 1, "orientation": 1, "house_group_id": 1})
+        ib = await db.images.find_one({"dataset_id": b}, {"_id": 0, "batch": 1, "original_filename": 1, "orientation": 1, "house_group_id": 1})
+        kpa = await run_in_threadpool(_orb_keypoint_count, a, ia["batch"], ia["original_filename"])
+        kpb = await run_in_threadpool(_orb_keypoint_count, b, ib["batch"], ib["original_filename"])
+        good = gp.get("good_matches") or 0
+        out.append({
+            "image_a": a, "image_b": b,
+            "file_a": ia["original_filename"], "file_b": ib["original_filename"],
+            "batch_a": ia["batch"], "batch_b": ib["batch"],
+            "orientation_a": ia["orientation"], "orientation_b": ib["orientation"],
+            "group_a": ia.get("house_group_id"), "group_b": ib.get("house_group_id"),
+            "keypoints_a": kpa, "keypoints_b": kpb,
+            "raw_good_matches": good, "inliers": gp["inliers"],
+            "inlier_ratio": round(gp["inliers"] / good, 3) if good else None,
+            "strong": gp.get("strong", False),
+            "ruling": gp.get("ruling"),
+        })
+    return {"count": len(out), "pairs": out,
+            "note": "ORB/RANSAC is candidate evidence only. Rule SAME / DIFFERENT / UNSURE per pair."}
+
+
+@api.post("/housegroups/pairs/ruling")
+async def pair_ruling(payload: dict = Body(...)):
+    a, b, ruling = payload.get("image_a"), payload.get("image_b"), payload.get("ruling")
+    if ruling not in ("same", "different", "unsure"):
+        raise HTTPException(400, "ruling must be same|different|unsure")
+    await db.group_pairs.update_one(
+        {"$or": [{"image_a": a, "image_b": b}, {"image_a": b, "image_b": a}]},
+        {"$set": {"ruling": ruling}})
+    result = {"image_a": a, "image_b": b, "ruling": ruling, "merged": False}
+    if ruling == "same":
+        merged = await run_in_threadpool(pipeline.merge_images_into_group, [a, b], None, True)
+        result["merged"] = True
+        result["group"] = merged
+    return result
+
+
 # ---------------- Split ----------------
 @api.get("/split")
 async def split():
@@ -255,6 +331,7 @@ async def save_annotation(dataset_id: str, payload: dict = Body(...)):
         "occlusions": payload.get("occlusions", []),
         "notes": payload.get("notes", ""),
         "checklist": payload.get("checklist", {}),
+        "view_type": payload.get("view_type"),
         "status": payload.get("status", img.get("status", "pending")),
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -285,7 +362,10 @@ async def approve(dataset_id: str, payload: dict = Body(...)):
     result = await run_in_threadpool(
         ml.generate_and_store, dataset_id, img["ext"], size, planes,
         payload.get("occlusions", []), payload.get("notes", ""),
+        payload.get("view_type"),
     )
+    if payload.get("view_type"):
+        await db.images.update_one({"dataset_id": dataset_id}, {"$set": {"view_type": payload["view_type"]}})
     now = datetime.now(timezone.utc).isoformat()
     ann_doc = {
         "dataset_id": dataset_id, "planes": planes,

@@ -14,6 +14,10 @@ export const getHouseGroups = (onlyMulti) =>
   ax.get("/housegroups", { params: { only_multi: !!onlyMulti } }).then((r) => r.data);
 export const getCandidates = (minInliers = 12) =>
   ax.get("/housegroups/candidates", { params: { max_distance: minInliers } }).then((r) => r.data);
+export const getPairs = () => ax.get("/housegroups/pairs").then((r) => r.data);
+export const rulePair = (image_a, image_b, ruling) =>
+  ax.post("/housegroups/pairs/ruling", { image_a, image_b, ruling }).then((r) => r.data);
+export const getSpecChecklist = () => ax.get("/spec/checklist").then((r) => r.data);
 export const mergeGroups = (imageIds) =>
   ax.post("/housegroups/merge", { image_ids: imageIds }).then((r) => r.data);
 export const confirmGroup = (gid) => ax.post(`/housegroups/${gid}/confirm`).then((r) => r.data);

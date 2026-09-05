@@ -199,7 +199,8 @@ export default function DashboardCheckpoint({ summary, mlStatus, onGoto }) {
         </div>
         <p className="text-xs text-slate-500 mb-4">
           Selected after real visual inspection to span the dataset's conditions. Note: all 217 images
-          are ground-level real-estate photos (not aerial); zero portrait orientation exists in this set.
+          are ground-level real-estate photos (not aerial). Batch 2 contains 18 genuine portrait
+          smartphone photos (EXIF orientation applied); 0169 is a portrait pilot.
         </p>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {reps.map((r) => (

@@ -1,0 +1,40 @@
+{
+  "summary": "Foundation Audit V2 verification. Backend: 9/9 new pytest cases pass (batch2 orientation 18P/31L incl. 0169 portrait; representative 5 = 0001/0050/0138/0169/0173; /api/spec/checklist loaded with spec_version + occlusion_types + generation_methods; /api/housegroups/pairs returns 7 pairs with full ORB/RANSAC metrics + nullable ruling; pair rulings 'different' & 'unsure' persist and merged=false (no production mutation); approve pipeline produces spec-compliant meta.json with spec_version=='roofline-labeling-spec-v1', coordinate_space=='exif_applied_display', per-plane generation_method+human_approved, and parapets=['plane-02']; needs_review works). Frontend: black-canvas regression was NOT fully fixed on incoming code — canvas 0001 stayed black until viewport resize; I applied a minimal in-scope race-fix (re-run canvas physical resize inside image.onload). After fix: 0001 landscape and 0169 portrait both render on initial studio load with correct aspect (no stretch). Point-assist → plane-row-0 appears, view-type dropdown selectable to 'oblique', spec checklist toggles (check-eave_lower_boundary), parapet-0 toggle, approve button clickable. Cleanup: reset 0001/0138/0169 back to status=pending and deleted their annotations; 217 images intact; the 217 singleton house_groups and train152/val31/holdout34 split unchanged. iteration_1 rulings on 7 pairs preserved.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/spec/checklist", "issue": "checklist array length is 16 but spec says 15 (one extra item). Suggest reviewing spec_checklist.CHECKLIST vs PROJECT_SPEC.md."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "AnnotationWorkspace canvas", "issue": "BLACK CANVAS on initial studio mount — image URL loads OK (200) and image.onload should fire but canvas stayed empty until a window-resize (or my fix) forced c.width/c.height re-assignment. Root cause: useLayoutEffect resize runs once on mount with empty deps; if wrapper layout races the initial paint, canvas backing store is out of sync with viewRef.scale/offset computed later in fitView(). Removing crossOrigin (per audit V2 fix note) did NOT resolve this. Applied minimal in-scope fix in /app/frontend/src/components/AnnotationWorkspace.js — inside image.onload, re-apply c.width=wrap.clientWidth, c.height=wrap.clientHeight, then setImgLoaded(true) + fitView(). Verified both 0001 (landscape, 1.5MP) and 0169 (portrait, 12MP) now render with correct aspect.", "selector": "[data-testid=annotation-canvas]", "priority": "HIGH"}
+    ],
+    "integration_issues": [
+      {"flow": "Point-assist toast", "issue": "Point-assist proposal call succeeds and plane-row-0 appears, but I could not detect a visible 'CPU-assist' text toast via generic selectors. A 'generating proposal…' indicator is shown. Main agent should confirm/toast contents include the 'CPU-assist' wording that the review requires (backend ml.propose returns backend=='cpu_assist_fallback' correctly).", "affected_selectors": ["[class*=toast]", "[data-sonner-toast]"]}
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_audit_v2.py", "/app/backend/tests/backend_test.py", "/app/backend/tests/test_foundation.py", "/app/test_reports/pytest/audit_v2.xml"],
+  "action_items": [
+    "Confirm/adjust /app/backend/spec_checklist.py so CHECKLIST has exactly 15 items to match roofline-labeling-spec-v1 (currently 16).",
+    "Re-verify the black-canvas fix I applied (image.onload re-applies canvas physical dims). Consider a cleaner solution: make the sizing useLayoutEffect depend on activeId/imgLoaded, or wrap in ResizeObserver so it always matches wrapper.",
+    "Ensure the point-assist success toast literally contains the phrase 'CPU-assist' (test-visible), since the review requires it."
+  ],
+  "critical_code_review_comments": [
+    "AnnotationWorkspace.js draw useEffect deps include imgLoaded and tick but the canvas sizing useLayoutEffect has empty deps — this is the race that produces the initial black canvas; recommend switching to ResizeObserver bound to wrapRef and/or re-sizing on activeId change.",
+    "server.py approve endpoint returns inline meta while /api/dataset/{id} returns only the meta storage key path; the two shapes disagree — consider adding a GET /api/annotations/{id}/meta endpoint that fetches and returns the JSON meta blob to make provenance verifiable via API.",
+    "server.py at 413 lines is still fine; group_pairs_full endpoint calls _orb_keypoint_count in threadpool per pair — 7 pairs today but if list grows this will scale poorly; consider caching keypoint counts on the image doc."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_audit_v2.py",
+    "/app/frontend/src/components/AnnotationWorkspace.js"
+  ],
+  "success_rate": {"backend": "100% (9/9 audit_v2 + prior 13/13 iteration_1)", "frontend": "~90% — canvas render works after my fix; toast wording unverified"},
+  "test_credentials": "N/A — no auth",
+  "seed_data_creation": "During UI tests, 0001 was momentarily approved and 0138 marked needs_review. Cleanup executed at end: images.update_many({0001,0138,0169}, status=pending) + annotations.delete_many({0001,0138,0169}). Verified 217 images intact and pending. House-group pair rulings from iteration_1 preserved.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "AnnotationWorkspace.js image.onload now re-applies canvas dims (fix for black-canvas race). test_audit_v2.py is the new regression file — run with `pytest /app/backend/tests/ -o addopts=''`. When approving via UI, wait ~5s after point-assist for propose to return before clicking approve-btn (there's a 'generating proposal…' indicator). 0001, 0138, 0169 are all in pending status with no annotations after this run. The 7 group_pairs already have iteration_2 rulings (0042/0176=different, 0051/0177=unsure) — do NOT overwrite them with 'same'.",
+  "rca of the issue": "Black-canvas bug root cause: useLayoutEffect that sets canvas.width/height depends on `[]` — it runs exactly once on mount. Under certain layout timing, the initial canvas backing store dimensions are stale relative to the wrapper's clientWidth by the time image.onload fires and fitView() computes scale/offset from wrapper. Any subsequent resize event fires the handler which re-syncs c.width/c.height and setTick — resurrecting the draw. Removing crossOrigin (the audit V2 claim) does not affect this race. Fix: re-apply c.width=wrap.clientWidth inside image.onload before setImgLoaded(true)+fitView()."
+}

@@ -49,8 +49,16 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
   spec-compliant annotation of the 5 is deferred to human + spec.
 - SAM2 GPU inference not run (CPU-only env), by design.
 
+## Pilot 5 images — executed 2026-06 (agent-driven SAM2-CPU run, human approval still pending)
+- Report: `/app/reports/PILOT_5_REPORT.md`; evidence: `/app/reports/pilot/overlays|masks`; scripts: `scripts/pilot_run.py`, `pilot_fix.py`.
+- Real SAM2 CPU (hiera-tiny) on all 5. Encode ~3.5–3.8s/image (once), predict 0.07–0.5s/point; embedding cache OK.
+- Coordinate/orientation verification PASS on all 5 incl. 0169 (portrait EXIF=6, 3024×4032) and 0173 (5712×4284): clicked point = same physical pixel; db_size==display_size.
+- SAM2 quality: EXCELLENT on pitched tile roofs (0138 best; 0173, 0050 garage, 0001 right hip). Point placement is decisive; repositioning fixed 0001 tower/left-wing. 0050 left gable slope occluded by tree.
+- 0169 (modern flat roof + parapets) = HARD/AMBIGUOUS: no roof planes visible from ground, only parapet caps → needs full manual polygon along parapet top (-parapet) + client clarification (pergola/cantilever slab).
+- Recommendation: workflow READY to scale on tile pitched roofs; treat flat/parapet homes as a separate manual+clarify track. Agent did NOT mark any as approved/spec-final (human eave-precision gate).
+
 ## Backlog (post human validation of the 5)
-- P0: Human runs the 5-image pilot in the studio (SAM2-CPU proposal → manual correction per PROJECT_SPEC.md) and approves.
+- P0: Human validates eave precision on the 5 in the studio, rules on 0169 ambiguities, then approves. (Agent pilot + QA done 2026-06.)
 - DONE 2026-06: Real SAM2 on CPU (sam2 1.1.0 + hiera_tiny), embedding cache, manual tools (polygon/brush/eraser/vertex/undo-redo), flood-fill demoted to "Colour Region Helper" (never SAM2). Verified iteration_3 100%.
 - P1: Install SAM2 + checkpoints on a GPU env; enable real SAM2 proposals; brush/eraser tools.
 - P1: Scale annotation 50 → 100 → 150 → 200 on the fixed split.

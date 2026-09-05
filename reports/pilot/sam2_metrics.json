@@ -1,0 +1,322 @@
+{
+  "0001": {
+    "batch": "batch1",
+    "exif_orientation": null,
+    "display_size": [
+      1536,
+      1152
+    ],
+    "encode_ms": 3780,
+    "embedding_cached_after_first_predict": true,
+    "n_points": 3,
+    "planes": [
+      {
+        "plane": "tower_hip",
+        "point_disp": [
+          889,
+          406
+        ],
+        "score": 0.726,
+        "area_frac": 0.0015,
+        "predict_ms": 154,
+        "sam2_multimask_scores": [
+          0.093,
+          0.726,
+          0.176
+        ]
+      },
+      {
+        "plane": "right_hip_garage",
+        "point_disp": [
+          1097,
+          461
+        ],
+        "score": 0.778,
+        "area_frac": 0.0112,
+        "predict_ms": 94,
+        "sam2_multimask_scores": [
+          0.257,
+          0.778,
+          0.681
+        ]
+      },
+      {
+        "plane": "left_wing",
+        "point_disp": [
+          609,
+          470
+        ],
+        "score": 0.625,
+        "area_frac": 0.0039,
+        "predict_ms": 84,
+        "sam2_multimask_scores": [
+          0.341,
+          0.367,
+          0.625
+        ]
+      }
+    ]
+  },
+  "0169": {
+    "batch": "batch2",
+    "exif_orientation": 6,
+    "display_size": [
+      3024,
+      4032
+    ],
+    "encode_ms": 3732,
+    "embedding_cached_after_first_predict": true,
+    "n_points": 4,
+    "planes": [
+      {
+        "plane": "left_tower_parapet",
+        "point_disp": [
+          576,
+          1319
+        ],
+        "score": 0.62,
+        "area_frac": 0.0011,
+        "predict_ms": 294,
+        "sam2_multimask_scores": [
+          0.005,
+          0.612,
+          0.62
+        ]
+      },
+      {
+        "plane": "mid_block_parapet",
+        "point_disp": [
+          1152,
+          1253
+        ],
+        "score": 0.851,
+        "area_frac": 0.0013,
+        "predict_ms": 155,
+        "sam2_multimask_scores": [
+          0.005,
+          0.851,
+          0.278
+        ]
+      },
+      {
+        "plane": "roof_deck_pergola",
+        "point_disp": [
+          1613,
+          1109
+        ],
+        "score": 0.635,
+        "area_frac": 0.011,
+        "predict_ms": 163,
+        "sam2_multimask_scores": [
+          0.041,
+          0.281,
+          0.635
+        ]
+      },
+      {
+        "plane": "right_canopy_slab",
+        "point_disp": [
+          2016,
+          1728
+        ],
+        "score": 0.514,
+        "area_frac": 0.0265,
+        "predict_ms": 217,
+        "sam2_multimask_scores": [
+          0.353,
+          0.514,
+          0.492
+        ]
+      }
+    ]
+  },
+  "0050": {
+    "batch": "batch1",
+    "exif_orientation": null,
+    "display_size": [
+      1376,
+      768
+    ],
+    "encode_ms": 3487,
+    "embedding_cached_after_first_predict": true,
+    "n_points": 3,
+    "planes": [
+      {
+        "plane": "left_gable_slope",
+        "point_disp": [
+          580,
+          258
+        ],
+        "score": 0.511,
+        "area_frac": 0.0132,
+        "predict_ms": 104,
+        "sam2_multimask_scores": [
+          0.238,
+          0.511,
+          0.47
+        ]
+      },
+      {
+        "plane": "right_gable_slope",
+        "point_disp": [
+          825,
+          270
+        ],
+        "score": 0.746,
+        "area_frac": 0.0126,
+        "predict_ms": 73,
+        "sam2_multimask_scores": [
+          0.236,
+          0.746,
+          0.737
+        ]
+      },
+      {
+        "plane": "garage_hip",
+        "point_disp": [
+          600,
+          352
+        ],
+        "score": 0.845,
+        "area_frac": 0.0092,
+        "predict_ms": 84,
+        "sam2_multimask_scores": [
+          0.206,
+          0.845,
+          0.523
+        ]
+      }
+    ]
+  },
+  "0138": {
+    "batch": "batch1",
+    "exif_orientation": null,
+    "display_size": [
+      1536,
+      831
+    ],
+    "encode_ms": 3488,
+    "embedding_cached_after_first_predict": true,
+    "n_points": 3,
+    "planes": [
+      {
+        "plane": "left_hip",
+        "point_disp": [
+          263,
+          439
+        ],
+        "score": 0.33,
+        "area_frac": 0.0181,
+        "predict_ms": 150,
+        "sam2_multimask_scores": [
+          0.241,
+          0.315,
+          0.33
+        ]
+      },
+      {
+        "plane": "center_front_hip",
+        "point_disp": [
+          614,
+          437
+        ],
+        "score": 0.541,
+        "area_frac": 0.0181,
+        "predict_ms": 87,
+        "sam2_multimask_scores": [
+          0.127,
+          0.303,
+          0.541
+        ]
+      },
+      {
+        "plane": "right_garage_hip",
+        "point_disp": [
+          1097,
+          470
+        ],
+        "score": 0.882,
+        "area_frac": 0.0035,
+        "predict_ms": 93,
+        "sam2_multimask_scores": [
+          0.088,
+          0.882,
+          0.551
+        ]
+      }
+    ]
+  },
+  "0173": {
+    "batch": "batch2",
+    "exif_orientation": 1,
+    "display_size": [
+      5712,
+      4284
+    ],
+    "encode_ms": 3710,
+    "embedding_cached_after_first_predict": true,
+    "n_points": 4,
+    "planes": [
+      {
+        "plane": "upper_tower_hip",
+        "point_disp": [
+          2530,
+          979
+        ],
+        "score": 0.452,
+        "area_frac": 0.0039,
+        "predict_ms": 494,
+        "sam2_multimask_scores": [
+          0.018,
+          0.452,
+          0.184
+        ]
+      },
+      {
+        "plane": "left_hip",
+        "point_disp": [
+          1142,
+          1530
+        ],
+        "score": 0.659,
+        "area_frac": 0.0036,
+        "predict_ms": 500,
+        "sam2_multimask_scores": [
+          0.008,
+          0.659,
+          0.59
+        ]
+      },
+      {
+        "plane": "main_lower_hip",
+        "point_disp": [
+          1632,
+          2081
+        ],
+        "score": 0.835,
+        "area_frac": 0.0176,
+        "predict_ms": 397,
+        "sam2_multimask_scores": [
+          0.023,
+          0.002,
+          0.835
+        ]
+      },
+      {
+        "plane": "right_entry_roof",
+        "point_disp": [
+          4692,
+          898
+        ],
+        "score": 0.556,
+        "area_frac": 0.0261,
+        "predict_ms": 408,
+        "sam2_multimask_scores": [
+          0.074,
+          0.196,
+          0.556
+        ]
+      }
+    ]
+  }
+}

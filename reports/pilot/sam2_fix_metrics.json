@@ -1,0 +1,44 @@
+{
+  "0001": [
+    {
+      "plane": "tower_hip",
+      "point": [
+        955,
+        378
+      ],
+      "score": 0.589,
+      "area_frac": 0.0067
+    },
+    {
+      "plane": "left_wing",
+      "point": [
+        665,
+        452
+      ],
+      "score": 0.753,
+      "area_frac": 0.0043
+    }
+  ],
+  "0050": [
+    {
+      "plane": "left_gable_slope",
+      "point": [
+        500,
+        240
+      ],
+      "score": 0.754,
+      "area_frac": 0.003
+    }
+  ],
+  "0169": [
+    {
+      "plane": "mid_block_parapet",
+      "point": [
+        1140,
+        1180
+      ],
+      "score": 0.855,
+      "area_frac": 0.0054
+    }
+  ]
+}

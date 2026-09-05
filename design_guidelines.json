@@ -1,0 +1,171 @@
+{
+  "project_name": "Roofline Milestone 1 — Phase 1 (Foundation): Roof Segmentation & Human-in-the-Loop Annotation Studio",
+  "app_type": "hybrid_fullstack",
+  "archetype": "THE PERFORMANCE PRO / COMMAND CENTER CVAT & LABEL STUDIO STYLE",
+  "theme": "Dark Command Center (Dark Slate/Obsidian #090D16 base with rich high-contrast overlays, vivid signal badges, and glowing canvas HUD)",
+  "typography": {
+    "font_family_headings": "Outfit, sans-serif",
+    "font_family_body": "Inter, sans-serif",
+    "font_family_mono": "JetBrains Mono, Source Code Pro, monospace",
+    "hierarchy": {
+      "h1": "text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-100",
+      "h2": "text-xl sm:text-2xl lg:text-3xl font-semibold tracking-tight text-slate-100",
+      "h3": "text-lg sm:text-xl font-medium text-slate-200",
+      "h4": "text-base sm:text-lg font-medium text-slate-300",
+      "body": "text-sm text-slate-300 leading-relaxed",
+      "caption": "text-xs font-mono uppercase tracking-wider text-slate-400"
+    }
+  },
+  "colors": {
+    "background": {
+      "main": "#090D16",
+      "surface": "#111827",
+      "surface_elevated": "#1F2937",
+      "canvas_bg": "#030712",
+      "panel_border": "#374151"
+    },
+    "text": {
+      "primary": "#F9FAFB",
+      "secondary": "#9CA3AF",
+      "muted": "#6B7280",
+      "accent_glow": "#60A5FA"
+    },
+    "status": {
+      "pending": {
+        "bg": "bg-amber-950/60",
+        "border": "border-amber-500/40",
+        "text": "text-amber-300",
+        "dot": "bg-amber-400"
+      },
+      "approved": {
+        "bg": "bg-emerald-950/60",
+        "border": "border-emerald-500/40",
+        "text": "text-emerald-300",
+        "dot": "bg-emerald-400"
+      },
+      "needs_review": {
+        "bg": "bg-rose-950/60",
+        "border": "border-rose-500/40",
+        "text": "text-rose-300",
+        "dot": "bg-rose-400"
+      }
+    },
+    "brand_accent": {
+      "primary": "#3B82F6",
+      "primary_hover": "#2563EB",
+      "cyan_prompt": "#06B6D4",
+      "magenta_prompt": "#EC4899",
+      "yellow_warning": "#EAB308",
+      "emerald_success": "#10B981"
+    },
+    "roof_plane_colors": [
+      { "id": "plane_1", "name": "Main Pitch East", "hex": "#3B82F6", "rgba": "rgba(59, 130, 246, 0.45)" },
+      { "id": "plane_2", "name": "Main Pitch West", "hex": "#10B981", "rgba": "rgba(16, 185, 129, 0.45)" },
+      { "id": "plane_3", "name": "Dormer Front", "hex": "#F59E0B", "rgba": "rgba(245, 158, 11, 0.45)" },
+      { "id": "plane_4", "name": "Garage Section", "hex": "#EC4899", "rgba": "rgba(236, 72, 153, 0.45)" },
+      { "id": "plane_5", "name": "Porch Slope", "hex": "#8B5CF6", "rgba": "rgba(139, 92, 246, 0.45)" },
+      { "id": "plane_6", "name": "Parapet Flat (-parapet)", "hex": "#06B6D4", "rgba": "rgba(6, 182, 212, 0.45)" }
+    ]
+  },
+  "layout_strategy": {
+    "spacing_scale": "p-2, p-4, p-6, p-8 for cards; strict dense layouts in workspace with 1px border grid separators",
+    "dashboard_grid": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6",
+    "annotation_workspace": "flex flex-col h-screen overflow-hidden bg-[#030712] text-slate-100",
+    "canvas_layout": "relative flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden",
+    "left_tools_panel": "lg:col-span-1 border-r border-slate-800 bg-[#0B0F19] p-3 flex lg:flex-col items-center gap-2",
+    "center_canvas": "lg:col-span-8 relative flex items-center justify-center bg-[#030712] p-4 overflow-hidden select-none",
+    "right_inspector_panel": "lg:col-span-3 border-l border-slate-800 bg-[#0B0F19] flex flex-col h-full overflow-y-auto p-4 gap-4"
+  },
+  "components_and_views": {
+    "navigation_bar": {
+      "path": "src/components/HeaderNav.js",
+      "features": ["App Title with SAM2 GPU indicator badge", "Tab switcher: Checkpoint Dashboard | Dataset Gallery | Annotation Workspace | House Groups | Leakage Report", "Quick Stats ticker: Batch 1 & 2 (217 images), Approved count, Leakage check status", "Keyboard shortcuts modal toggle trigger"]
+    },
+    "checkpoint_dashboard": {
+      "path": "src/components/DashboardCheckpoint.js",
+      "features": [
+        "Ingestion Summary Card: 217 total roof images across 2 distinct batches",
+        "House Group Breakdown: grouping logic to prevent data leakage across train/val/holdout splits",
+        "Split Visualizer: Train (70%), Val (15%), Holdout (15%) with house-group integrity verification",
+        "Leakage Check Status Banner: Green Passed badge confirming 0 house_group overlaps across splits",
+        "GPU / CPU / CUDA Hardware Report Card: PyTorch 2.4, CUDA 12.1, SAM2-Hiera-Large active model, GPU VRAM meter",
+        "QA Scripts Runner & Status Table: check_eave_drip_edges.py, verify_gable_exclusions.py, validate_15pct_occlusions.py, check_parapet_naming.py"
+      ]
+    },
+    "dataset_gallery": {
+      "path": "src/components/DatasetGallery.js",
+      "features": [
+        "Filter bar by Status (All, Pending, Approved, Needs Review), Batch (Batch 1, Batch 2), and House Group",
+        "Search by Image ID or House Group ID",
+        "Grid view with high-res thumbnails, status badges, plane count pill, and house group chip",
+        "Quick action hover menu: Open in SAM2 Studio, Mark Needs Review, Quick Approve"
+      ]
+    },
+    "annotation_workspace": {
+      "path": "src/components/AnnotationWorkspace.js",
+      "features": [
+        "Interactive HTML5/Canvas viewer with Zoom (10% - 800%), Pan, Fit-to-screen",
+        "SAM2 Prompting mode: Left-click for Positive (+) point prompt, Right-click/Shift-click for Negative (-) point prompt",
+        "Manual correction tools: Brush tool (size slider), Eraser, Polygon Tool for crisp edge adjustments",
+        "Plane Layer Manager: Drag-to-reorder, visiblity toggle (eye icon), color picker, rename plane, -parapet suffix toggle",
+        "Plane Checklist Verification Panel: Eave/Gutter Lip verified check, Drip Edge verified check, Gable Wall excluded check, Occlusion < 15% rule badge",
+        "Toolbar controls: Overlay Opacity Slider (0% - 100%), Toggle Mask Overlay button (Shortcut: 'O'), Invert Colors ('I'), Reset View ('R')",
+        "Action Bar: Previous ('A' or Left Arrow), Next ('D' or Right Arrow), Mark Needs Review ('N'), Approve & Generate JSON ('S' or Enter)"
+      ]
+    },
+    "house_group_management": {
+      "path": "src/components/HouseGroupManager.js",
+      "features": [
+        "Visual House Group clusters (grouping multi-view images of the same residence)",
+        "Confidence / Uncertainty score flags for automated clustering",
+        "Interactive Merge & Split controls for house groups",
+        "Anti-leakage impact preview before confirming group edits"
+      ]
+    },
+    "split_leakage_report": {
+      "path": "src/components/LeakageReport.js",
+      "features": [
+        "Full split matrix table with house_group hash validation",
+        "Leakage detector status (0 overlap guaranteed)",
+        "Download split configuration JSON & CSV export"
+      ]
+    }
+  },
+  "keyboard_shortcuts": [
+    { "key": "O", "action": "Toggle Mask Overlay" },
+    { "key": "B", "action": "Select Brush Tool" },
+    { "key": "P", "action": "Select SAM2 Point Prompt Tool" },
+    { "key": "G", "action": "Select Polygon Tool" },
+    { "key": "A / ←", "action": "Previous Image" },
+    { "key": "D / →", "action": "Next Image" },
+    { "key": "S / Enter", "action": "Approve & Generate Merged Mask + JSON" },
+    { "key": "N", "action": "Mark Needs Review" },
+    { "key": "+ / -", "action": "Adjust Brush Size" },
+    { "key": "Space + Drag", "action": "Pan Canvas" }
+  ],
+  "image_urls": [
+    {
+      "url": "https://images.unsplash.com/photo-1506290690282-661fbd742be8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2MzR8MHwxfHNlYXJjaHwxfHxhZXJpYWwlMjByb29mJTIwaG91c2UlMjBkcm9uZSUyMHNhdGVsbGl0ZXxlbnwwfHx8fDE3ODg2MTg0MzN8MA&ixlib=rb-4.1.0&q=85",
+      "category": "sample_roof_batch_1",
+      "description": "Aerial view of residential neighborhood roofs"
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1520473323060-f6f50760c35b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2MzR8MHwxfHNlYXJjaHwyfHxhZXJpYWwlMjByb29mJTIwaG91c2UlMjBkcm9uZSUyMHNhdGVsbGl0ZXxlbnwwfHx8fDE3ODg2MTg0MzN8MA&ixlib=rb-4.1.0&q=85",
+      "category": "sample_roof_batch_2",
+      "description": "High resolution drone shot of suburban house roof planes"
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1608015311754-0f49fd259557?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2MzR8MHwxfHNlYXJjaHw0fHxhZXJpYWwlMjByb29mJTIwaG91c2UlMjBkcm9uZSUyMHNhdGVsbGl0ZXxlbnwwfHx8fDE3ODg2MTg0MzN8MA&ixlib=rb-4.1.0&q=85",
+      "category": "sample_roof_complex",
+      "description": "Multi-pitch complex residential roof structure"
+    }
+  ],
+  "instructions_to_main_agent": [
+    "Build a high-performance, dark command center application tailored for computer vision engineers and roof segment annotators.",
+    "Ensure all interactive elements (buttons, canvas controls, search inputs, tabs, status badges) include explicit 'data-testid' attributes in kebab-case format.",
+    "Implement Sonner toast notifications for auto-save feedback, shortcut triggers, SAM2 mask generation events, and approval status updates.",
+    "Ensure the canvas viewer allows interactive point prompts, polygon drawing, brush strokes, opacity toggle, and full keyboard shortcut control.",
+    "Provide realistic mock data for all 217 dataset images, 45 house groups, split checks, and hardware CUDA environment specs so the application feels fully functional.",
+    "All components must be written in standard React JS (.js / .jsx extension) using Tailwind CSS and Lucide React icons."
+  ]
+}

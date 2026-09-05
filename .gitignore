@@ -81,3 +81,4 @@ memory/test_credentials.md
 # Mobile development
 android-sdk/data/downloads/batch2.zip
 data/downloads/batch2.zip
+models/sam2.1_hiera_tiny.pt

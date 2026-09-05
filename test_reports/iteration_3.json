@@ -1,0 +1,32 @@
+{
+  "summary": "Iteration 3 — SAM2 CPU verification (option C). Backend: 9/9 new pytest cases pass in /app/backend/tests/test_sam2.py — /api/ml/status truthful (sam2_cpu, cpu, torch 2.5.1, checkpoint present, cuda_available=false); /api/ml/propose method=sam2 on roof points [645,391] and [952,414] both return backend=='sam2_cpu', device=='cpu', numeric score, area_frac plausibly in [0.001,0.9], and non-empty polygons; embedding cache verified (first encode_ms >500, second call same dataset embedding_cached=true with encode_ms<200, predict_ms<2000); /api/ml/propose method=colour_region returns backend=='cpu_colour_region' with 'NOT SAM2' in note; sam2_error path present in server.py (no silent flood-fill fallback); approve pipeline accepts one polygon plane + one raster_png plane, returns generated.merged+planes+meta, meta.coordinate_space=='exif_applied_display', per-plane generation_method + human_approved=true, /api/merged/0001/raw serves 200 image/png; /api/annotations/0138/needs_review sets status and propagates to /api/dataset/0138. Frontend UI: Annotation Studio for 0001 renders roof image on data-testid annotation-canvas (verified via screenshot — image visible), ml-backend-badge shows 'SAM2 (CPU)', gpu-badge shows 'SAM2 · CPU', all requested tool testids present (tool-sam2/polygon/brush/eraser/vertex/colour/occlusion/pan + undo-btn + redo-btn). SAM2 click flow shows 'SAM2 running…' overlay and produced a plane row. Polygon tool draws a plane. Cleanup executed: 0001 & 0138 reset to status=pending, annotations deleted; 217 images / 217 house_groups / split 152-31-34 preserved; iteration_2 pair rulings untouched.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_sam2.py",
+    "/app/test_reports/pytest/sam2.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "ml.py sam2_propose uses a single global _sam2_last_image_id — under concurrent requests for different images the cache would thrash. For a single-annotator pilot this is fine; if you ever move to multi-user, switch to an LRU keyed by image_id with the actual embedding cached (SAM2 recomputes set_image each time key mismatches).",
+    "server.py ml_propose catches all Exception in the SAM2 branch and returns backend=='sam2_error' with str(e) exposed to the client — acceptable for internal pilot, but consider logging server-side and returning a stable error_code so the frontend can branch on it without string matching.",
+    "ml.py generate_and_store hard-codes coordinate_space='exif_applied_display' as default; approve endpoint never overrides it. Add an explicit contract test that any raster_png submitted uses the same EXIF-applied display size (already asserted implicitly by resize to (w,h))."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_sam2.py"
+  ],
+  "success_rate": {"backend": "100% (9/9)", "frontend": "100% (all required testids + SAM2 flow + polygon + undo/redo confirmed)"},
+  "test_credentials": "N/A — no auth",
+  "seed_data_creation": "During UI test the workspace autosaved a polygon plane on 0001. Cleanup executed at end: images.update_many({0001,0138}, status=pending) + annotations.delete_many({0001,0138}). Verified: total 217 images, 217 house_groups, split train152/val31/holdout34 unchanged, iteration_2 pair rulings preserved.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "SAM2 CPU is real and working end-to-end. First SAM2 click on a new image encodes ~4s; subsequent clicks fast (embedding cached). /api/ml/propose method='sam2' always returns backend in {sam2_cpu, sam2_error} — never a flood-fill mislabelled. method='colour_region' is the only path to the OpenCV helper. Regression suite lives at /app/backend/tests/test_sam2.py (run: `pytest /app/backend/tests/test_sam2.py -o addopts=''`). All 0001/0138 state cleaned; foundation intact for 5-image pilot.",
+  "rca of the issue": "N/A — reported bug (roof click returned 'No region found' or huge blob) is fixed by option C: real SAM2 (sam2_cpu) replaces flood-fill for method='sam2'; flood-fill remains only under explicit method='colour_region'. Verified with two roof points on 0001 both returning non-empty polygons with plausible area_frac and score > 0."
+}

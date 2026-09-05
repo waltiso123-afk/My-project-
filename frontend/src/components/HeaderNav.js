@@ -9,7 +9,7 @@ const TABS = [
 ];
 
 export default function HeaderNav({ tab, setTab, summary, mlStatus }) {
-  const gpu = mlStatus?.gpu_ready;
+  const gpu = mlStatus?.active_backend === "sam2_cuda";
   return (
     <header
       className="sticky top-0 z-40 border-b border-slate-800 bg-[#0B0F19]/95 backdrop-blur-xl"
@@ -65,12 +65,16 @@ export default function HeaderNav({ tab, setTab, summary, mlStatus }) {
             className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-mono border ${
               gpu
                 ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-300"
+                : mlStatus?.active_backend === "sam2_cpu"
+                ? "bg-sky-950/60 border-sky-500/40 text-sky-300"
                 : "bg-amber-950/50 border-amber-500/30 text-amber-300"
             }`}
             title={mlStatus?.message || ""}
           >
             {gpu ? <Zap className="w-3.5 h-3.5" /> : <Cpu className="w-3.5 h-3.5" />}
-            {gpu ? "SAM2 · GPU" : "CPU assist"}
+            {mlStatus?.active_backend === "sam2_cuda" ? "SAM2 · GPU"
+              : mlStatus?.active_backend === "sam2_cpu" ? "SAM2 · CPU"
+              : "SAM2 n/a"}
           </div>
         </div>
       </div>

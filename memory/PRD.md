@@ -50,7 +50,8 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
 - SAM2 GPU inference not run (CPU-only env), by design.
 
 ## Backlog (post human validation of the 5)
-- P0: Human annotates/validates the 5 representative images (needs labeling spec).
+- P0: Human runs the 5-image pilot in the studio (SAM2-CPU proposal → manual correction per PROJECT_SPEC.md) and approves.
+- DONE 2026-06: Real SAM2 on CPU (sam2 1.1.0 + hiera_tiny), embedding cache, manual tools (polygon/brush/eraser/vertex/undo-redo), flood-fill demoted to "Colour Region Helper" (never SAM2). Verified iteration_3 100%.
 - P1: Install SAM2 + checkpoints on a GPU env; enable real SAM2 proposals; brush/eraser tools.
 - P1: Scale annotation 50 → 100 → 150 → 200 on the fixed split.
 - P2: SegFormer-B0 baseline (BCE+Dice), geometric eval on holdout, holdout_error_curve.csv/.png.

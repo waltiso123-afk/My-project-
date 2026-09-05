@@ -297,17 +297,27 @@ async def leakage_check():
 @api.post("/ml/propose")
 async def ml_propose(payload: dict = Body(...)):
     dataset_id = payload["dataset_id"]
+    method = payload.get("method", "sam2")  # 'sam2' | 'colour_region'
     positive = payload.get("positive_points") or []
     negative = payload.get("negative_points") or []
-    tol = int(payload.get("tolerance", 22))
     if not positive:
         raise HTTPException(400, "at least one positive point required")
     img = await db.images.find_one({"dataset_id": dataset_id}, {"_id": 0, "storage_path": 1})
     if not img:
         raise HTTPException(404, "image not found")
     data, _ = await run_in_threadpool(storage.get_object, img["storage_path"])
-    result = await run_in_threadpool(ml.propose, data, positive, negative, tol)
-    return result
+
+    if method == "colour_region":
+        tol = int(payload.get("tolerance", 22))
+        return await run_in_threadpool(ml.colour_region, data, positive, tol)
+
+    # SAM2 — surface errors explicitly, never silently fall back to flood-fill
+    try:
+        return await run_in_threadpool(ml.sam2_propose, data, dataset_id, positive, negative)
+    except Exception as e:
+        return {"backend": "sam2_error", "polygons": [], "error": str(e),
+                "note": "SAM2 failed. Switch to manual annotation or the Colour Region helper. "
+                        "No silent flood-fill fallback was performed."}
 
 
 # ---------------- Annotations ----------------

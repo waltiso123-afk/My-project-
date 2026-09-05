@@ -1,0 +1,159 @@
+{
+  "0001": {
+    "display_size": [
+      1536,
+      1152
+    ],
+    "n_planes": 3,
+    "planes": [
+      {
+        "plane": "plane-01",
+        "name": "left_wing_front",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0027
+      },
+      {
+        "plane": "plane-02",
+        "name": "central_upper_hip",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0048
+      },
+      {
+        "plane": "plane-03",
+        "name": "garage_front_hip",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0088
+      }
+    ]
+  },
+  "0050": {
+    "display_size": [
+      1376,
+      768
+    ],
+    "n_planes": 3,
+    "planes": [
+      {
+        "plane": "plane-01",
+        "name": "gable_left_slope",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0102
+      },
+      {
+        "plane": "plane-02",
+        "name": "gable_right_slope",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0109
+      },
+      {
+        "plane": "plane-03",
+        "name": "garage_front_hip",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0114
+      }
+    ]
+  },
+  "0138": {
+    "display_size": [
+      1536,
+      831
+    ],
+    "n_planes": 2,
+    "planes": [
+      {
+        "plane": "plane-01",
+        "name": "left_front_hip",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0118
+      },
+      {
+        "plane": "plane-02",
+        "name": "right_garage_hip",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0034
+      }
+    ]
+  },
+  "0173": {
+    "display_size": [
+      5712,
+      4284
+    ],
+    "n_planes": 4,
+    "planes": [
+      {
+        "plane": "plane-01",
+        "name": "left_upper_hip",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0036
+      },
+      {
+        "plane": "plane-02",
+        "name": "main_lower_hip",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0135
+      },
+      {
+        "plane": "plane-03",
+        "name": "central_tower_front",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0067
+      },
+      {
+        "plane": "plane-04",
+        "name": "right_upper_hip",
+        "is_parapet": false,
+        "method": "sam2",
+        "area_frac": 0.0165
+      }
+    ]
+  },
+  "0169": {
+    "display_size": [
+      3024,
+      4032
+    ],
+    "n_planes": 4,
+    "planes": [
+      {
+        "plane": "plane-01",
+        "name": "highest_block_parapet",
+        "is_parapet": true,
+        "method": "poly",
+        "area_frac": 0.0046
+      },
+      {
+        "plane": "plane-02",
+        "name": "left_block_parapet",
+        "is_parapet": true,
+        "method": "poly",
+        "area_frac": 0.0029
+      },
+      {
+        "plane": "plane-03",
+        "name": "main_upper_parapet",
+        "is_parapet": true,
+        "method": "poly",
+        "area_frac": 0.0121
+      },
+      {
+        "plane": "plane-04",
+        "name": "lower_canopy_front",
+        "is_parapet": false,
+        "method": "poly",
+        "area_frac": 0.0145
+      }
+    ]
+  }
+}

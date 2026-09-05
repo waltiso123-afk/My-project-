@@ -1,0 +1,72 @@
+{
+  "file": "0169.jpeg",
+  "occlusions": [
+    {
+      "type": "palm",
+      "bbox": [
+        0.0,
+        0.05,
+        0.13,
+        0.4
+      ],
+      "hides": [
+        "plane-02"
+      ]
+    }
+  ],
+  "parapets": [
+    "plane-01",
+    "plane-02",
+    "plane-03"
+  ],
+  "notes": "PROVISIONAL / AMBIGUOUS \u2014 pending client confirmation. Modern flat-roof home behind parapet walls; from ground only parapet caps and a lower canopy slab are visible. Parapet planes are lit along the UPPER parapet edge (-parapet suffix). Open questions for the client: (a) does each flat roof behind a parapet count as its own lit plane; (b) is the louvered pergola/trellis a lit element (currently excluded); (c) the lower canopy is lit along the TOP of its dark fascia (top = drip edge), not the fascia bottom. Masks are provisional strips along the parapet caps and require client sign-off before scaling.",
+  "view_type": "frontal",
+  "planes": [
+    {
+      "index": 1,
+      "plane_id": "plane-01",
+      "name": "highest_block_parapet",
+      "file": "plane-01-parapet.png",
+      "is_parapet": true,
+      "generation_method": "vlm_plan+sam2_pointprompt+human_qa",
+      "human_corrected": true,
+      "human_approved": true
+    },
+    {
+      "index": 2,
+      "plane_id": "plane-02",
+      "name": "left_block_parapet",
+      "file": "plane-02-parapet.png",
+      "is_parapet": true,
+      "generation_method": "vlm_plan+sam2_pointprompt+human_qa",
+      "human_corrected": true,
+      "human_approved": true
+    },
+    {
+      "index": 3,
+      "plane_id": "plane-03",
+      "name": "main_upper_parapet",
+      "file": "plane-03-parapet.png",
+      "is_parapet": true,
+      "generation_method": "vlm_plan+sam2_pointprompt+human_qa",
+      "human_corrected": true,
+      "human_approved": true
+    },
+    {
+      "index": 4,
+      "plane_id": "plane-04",
+      "name": "lower_canopy_front",
+      "file": "plane-04.png",
+      "is_parapet": false,
+      "generation_method": "vlm_plan+sam2_pointprompt+human_qa",
+      "human_corrected": true,
+      "human_approved": true
+    }
+  ],
+  "spec_version": "roofline-labeling-spec-v1",
+  "coordinate_space": "exif_applied_display",
+  "image_size": {
+    "width": 3024,
+    "height": 4032
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "display_size": [
+    1376,
+    768
+  ],
+  "planes": [
+    {
+      "i": 1,
+      "name": "garage-front-roof",
+      "is_parapet": false,
+      "point_px": [
+        522,
+        368
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0124,
+      "sam_score": 0.441,
+      "eave_note": "Front-facing continuous eave over the garage"
+    },
+    {
+      "i": 2,
+      "name": "main-upper-left",
+      "is_parapet": false,
+      "point_px": [
+        577,
+        222
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0049,
+      "sam_score": 0.69,
+      "eave_note": "The scored lower boundary is the side eave running backwards; the front sloped edge is a rake and not scored"
+    },
+    {
+      "i": 3,
+      "name": "main-upper-right",
+      "is_parapet": false,
+      "point_px": [
+        729,
+        238
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0044,
+      "sam_score": 0.766,
+      "eave_note": "The scored lower boundary is the side eave running backwards; the front sloped edge is a rake and not scored"
+    },
+    {
+      "i": 4,
+      "name": "main-right-parapet-roof",
+      "is_parapet": true,
+      "point_px": [
+        935,
+        295
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0045,
+      "sam_score": 0.617,
+      "eave_note": "Upper boundary is scored per parapet spec"
+    },
+    {
+      "i": 5,
+      "name": "breezeway-roof",
+      "is_parapet": false,
+      "point_px": [
+        1093,
+        353
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0063,
+      "sam_score": 0.637,
+      "eave_note": "Front-facing eave on the connecting structure"
+    },
+    {
+      "i": 6,
+      "name": "right-garage-parapet",
+      "is_parapet": true,
+      "point_px": [
+        1252,
+        337
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0041,
+      "sam_score": 0.61,
+      "eave_note": "Upper boundary is scored per parapet spec"
+    }
+  ]
+}

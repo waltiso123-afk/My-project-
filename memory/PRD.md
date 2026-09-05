@@ -57,7 +57,14 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
 - 0169 (modern flat roof + parapets) = HARD/AMBIGUOUS: no roof planes visible from ground, only parapet caps → needs full manual polygon along parapet top (-parapet) + client clarification (pergola/cantilever slab).
 - Recommendation: workflow READY to scale on tile pitched roofs; treat flat/parapet homes as a separate manual+clarify track. Agent did NOT mark any as approved/spec-final (human eave-precision gate).
 
-## Backlog (post human validation of the 5)
+## Mini-Milestone 1 (production format on 5 images) — 2026-06
+- Architecture executed: VLM reasoning/plan (gemini-3.1-pro-preview via Emergent Universal Key) -> SAM2 (CPU hiera-tiny) point prompts -> clip/reconcile -> agent QA & correction -> REAL production path `ml.generate_and_store` (object storage planes/merged/meta) -> approved annotations in DB.
+- Scripts: scripts/mm1_plan.py, mm1_segment.py, mm1_finalize_masks.py, mm1_store_export.py, mm1_qa_package.py.
+- Output: /app/reports/PILOT_MILESTONE_1/dataset/ (images,planes,merged,meta) + client README; ZIP /app/reports/PILOT_MILESTONE_1/PILOT_MILESTONE_1.zip (9.9MB, sha256 d4a5f18b..., 16 planes over 5 imgs). Internal QA report kept OUTSIDE the zip.
+- Download endpoints: GET /api/deliverables/milestone-1/{info,download} (also pilot-5 endpoints from prior package). Backend server.py updated.
+- Plane counts: 0001=3, 0050=3, 0138=2 (palm >15% split), 0173=4, 0169=4 (3 -parapet + 1 canopy, PROVISIONAL/ambiguous, documented in meta notes for client ruling).
+- QA passed: masks binary & at image dims, merged==union, originals unchanged, parapet naming/meta consistent, exactly 5 images.
+- Note: VLM over-segments and mis-locates points (palms/walls); agent QA correction is essential — full-auto is NOT production quality. Findings honest, no fabricated metrics. STOP gate respected (no mass annotation, no 50/100/150/200 checkpoints).
 - P0: Human validates eave precision on the 5 in the studio, rules on 0169 ambiguities, then approves. (Agent pilot + QA done 2026-06.)
 - DONE 2026-06: Real SAM2 on CPU (sam2 1.1.0 + hiera_tiny), embedding cache, manual tools (polygon/brush/eraser/vertex/undo-redo), flood-fill demoted to "Colour Region Helper" (never SAM2). Verified iteration_3 100%.
 - P1: Install SAM2 + checkpoints on a GPU env; enable real SAM2 proposals; brush/eraser tools.

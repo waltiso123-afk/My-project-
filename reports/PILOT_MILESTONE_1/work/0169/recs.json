@@ -1,0 +1,86 @@
+{
+  "display_size": [
+    3024,
+    4032
+  ],
+  "planes": [
+    {
+      "i": 1,
+      "name": "plane-01",
+      "is_parapet": true,
+      "point_px": [
+        1602,
+        1048
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0109,
+      "sam_score": 0.807,
+      "eave_note": "Top edge of parapet wall bounding highest central roof section."
+    },
+    {
+      "i": 2,
+      "name": "plane-02",
+      "is_parapet": true,
+      "point_px": [
+        2449,
+        1249
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0447,
+      "sam_score": 0.959,
+      "eave_note": "Top edge of parapet wall on right block."
+    },
+    {
+      "i": 3,
+      "name": "plane-03",
+      "is_parapet": true,
+      "point_px": [
+        574,
+        1350
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0004,
+      "sam_score": 0.65,
+      "eave_note": "Top edge of parapet wall on left architectural frame."
+    },
+    {
+      "i": 4,
+      "name": "plane-04",
+      "is_parapet": true,
+      "point_px": [
+        1723,
+        1411
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.0022,
+      "sam_score": 0.859,
+      "eave_note": "Top edge of parapet wall above second-story windows."
+    },
+    {
+      "i": 5,
+      "name": "plane-05",
+      "is_parapet": true,
+      "point_px": [
+        1723,
+        1653
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.1848,
+      "sam_score": 0.424,
+      "eave_note": "Top edge of planter parapet wall."
+    },
+    {
+      "i": 6,
+      "name": "plane-06",
+      "is_parapet": false,
+      "point_px": [
+        1814,
+        1774
+      ],
+      "source": "sam2_clipped",
+      "area_frac": 0.1628,
+      "sam_score": 0.491,
+      "eave_note": "Drip edge at top of dark fascia (lower edge of fascia explicitly excluded by spec)."
+    }
+  ]
+}

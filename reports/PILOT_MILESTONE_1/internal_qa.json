@@ -1,0 +1,133 @@
+{
+  "images": {
+    "0001": {
+      "display_size": [
+        1536,
+        1152
+      ],
+      "planes": [
+        {
+          "file": "plane-01.png",
+          "area_px": 4764
+        },
+        {
+          "file": "plane-02.png",
+          "area_px": 8495
+        },
+        {
+          "file": "plane-03.png",
+          "area_px": 15573
+        }
+      ],
+      "parapets": [],
+      "original_unchanged": true,
+      "n_planes": 3
+    },
+    "0050": {
+      "display_size": [
+        1376,
+        768
+      ],
+      "planes": [
+        {
+          "file": "plane-01.png",
+          "area_px": 10782
+        },
+        {
+          "file": "plane-02.png",
+          "area_px": 11571
+        },
+        {
+          "file": "plane-03.png",
+          "area_px": 12091
+        }
+      ],
+      "parapets": [],
+      "original_unchanged": true,
+      "n_planes": 3
+    },
+    "0138": {
+      "display_size": [
+        1536,
+        831
+      ],
+      "planes": [
+        {
+          "file": "plane-01.png",
+          "area_px": 15019
+        },
+        {
+          "file": "plane-02.png",
+          "area_px": 4281
+        }
+      ],
+      "parapets": [],
+      "original_unchanged": true,
+      "n_planes": 2
+    },
+    "0169": {
+      "display_size": [
+        3024,
+        4032
+      ],
+      "planes": [
+        {
+          "file": "plane-01-parapet.png",
+          "area_px": 56416
+        },
+        {
+          "file": "plane-02-parapet.png",
+          "area_px": 35796
+        },
+        {
+          "file": "plane-03-parapet.png",
+          "area_px": 147962
+        },
+        {
+          "file": "plane-04.png",
+          "area_px": 177188
+        }
+      ],
+      "parapets": [
+        "plane-01",
+        "plane-02",
+        "plane-03"
+      ],
+      "original_unchanged": true,
+      "n_planes": 4
+    },
+    "0173": {
+      "display_size": [
+        5712,
+        4284
+      ],
+      "planes": [
+        {
+          "file": "plane-01.png",
+          "area_px": 87090
+        },
+        {
+          "file": "plane-02.png",
+          "area_px": 329471
+        },
+        {
+          "file": "plane-03.png",
+          "area_px": 163929
+        },
+        {
+          "file": "plane-04.png",
+          "area_px": 403254
+        }
+      ],
+      "parapets": [],
+      "original_unchanged": true,
+      "n_planes": 4
+    }
+  },
+  "issues": [],
+  "checks": {
+    "n_images": 5,
+    "total_planes": 16
+  },
+  "passed": true
+}

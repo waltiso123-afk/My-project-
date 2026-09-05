@@ -1,0 +1,91 @@
+{
+  "image_id": "0138",
+  "original_filename": "0162.webp",
+  "batch": "batch1",
+  "split": "holdout",
+  "house_group_id": "HG-0138",
+  "original_dimensions": {
+    "width": 1536,
+    "height": 831
+  },
+  "display_dimensions": {
+    "width": 1536,
+    "height": 831
+  },
+  "exif_orientation": null,
+  "orientation": "landscape",
+  "coordinate_space": "exif_applied_display (masks generated in the pixels the annotator saw)",
+  "roof_plane_count": 3,
+  "planes": [
+    {
+      "plane_id": "plane-01",
+      "internal_name": "left_hip",
+      "file": "plane-01.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        263,
+        439
+      ],
+      "sam2_score": 0.33,
+      "sam2_area_fraction": 0.0181,
+      "sam2_predict_ms": 150,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    },
+    {
+      "plane_id": "plane-02",
+      "internal_name": "center_front_hip",
+      "file": "plane-02.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        614,
+        437
+      ],
+      "sam2_score": 0.541,
+      "sam2_area_fraction": 0.0181,
+      "sam2_predict_ms": 87,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    },
+    {
+      "plane_id": "plane-03",
+      "internal_name": "right_garage_hip",
+      "file": "plane-03.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        1097,
+        470
+      ],
+      "sam2_score": 0.882,
+      "sam2_area_fraction": 0.0035,
+      "sam2_predict_ms": 93,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    }
+  ],
+  "occlusions_observed": "Occlusion partielle par arbre/palmier.",
+  "parapets_confirmed": [],
+  "parapet_note": "",
+  "notes_and_ambiguities": "Croupe gauche (plane-01) et croupe garage droite (plane-03) captées proprement et bien séparées. plane-02 (centre) est un RATÉ SAM2: le point est tombé sur l'entrée/le palmier (occlusion) et non sur le pan central -> nécessite repositionnement/correction manuelle. Voisin à droite exclu.",
+  "sam2": {
+    "backend": "sam2_cpu",
+    "checkpoint": "sam2.1_hiera_tiny.pt",
+    "encode_ms_once_per_image": 3488,
+    "embedding_cache_used": true,
+    "n_point_prompts": 3
+  },
+  "review_status": "pilot_sam2_proposal_PENDING_human_review_and_client_confirmation",
+  "human_approved": false
+}

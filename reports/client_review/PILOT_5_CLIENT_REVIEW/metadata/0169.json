@@ -1,0 +1,113 @@
+{
+  "image_id": "0169",
+  "original_filename": "b2-001.jpeg",
+  "batch": "batch2",
+  "split": "val",
+  "house_group_id": "HG-0169",
+  "original_dimensions": {
+    "width": 4032,
+    "height": 3024
+  },
+  "display_dimensions": {
+    "width": 3024,
+    "height": 4032
+  },
+  "exif_orientation": 6,
+  "orientation": "portrait",
+  "coordinate_space": "exif_applied_display (masks generated in the pixels the annotator saw)",
+  "roof_plane_count": 4,
+  "planes": [
+    {
+      "plane_id": "plane-01",
+      "internal_name": "left_tower_parapet",
+      "file": "plane-01.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        576,
+        1319
+      ],
+      "sam2_score": 0.62,
+      "sam2_area_fraction": 0.0011,
+      "sam2_predict_ms": 294,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "ambiguous_needs_client_ruling"
+    },
+    {
+      "plane_id": "plane-02",
+      "internal_name": "mid_block_parapet",
+      "file": "plane-02.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        1152,
+        1253
+      ],
+      "sam2_score": 0.851,
+      "sam2_area_fraction": 0.0013,
+      "sam2_predict_ms": 155,
+      "point_repositioned_during_pilot": true,
+      "repositioned_point_display_xy": [
+        1140,
+        1180
+      ],
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "ambiguous_needs_client_ruling"
+    },
+    {
+      "plane_id": "plane-03",
+      "internal_name": "roof_deck_pergola",
+      "file": "plane-03.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        1613,
+        1109
+      ],
+      "sam2_score": 0.635,
+      "sam2_area_fraction": 0.011,
+      "sam2_predict_ms": 163,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "ambiguous_needs_client_ruling"
+    },
+    {
+      "plane_id": "plane-04",
+      "internal_name": "right_canopy_slab",
+      "file": "plane-04.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        2016,
+        1728
+      ],
+      "sam2_score": 0.514,
+      "sam2_area_fraction": 0.0265,
+      "sam2_predict_ms": 217,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "ambiguous_needs_client_ruling"
+    }
+  ],
+  "occlusions_observed": "",
+  "parapets_confirmed": [],
+  "parapet_note": "Éléments de type parapet présents mais NON confirmés — à statuer par le client. Aucun suffixe -parapet appliqué pour ne pas décider en silence.",
+  "notes_and_ambiguities": "CAS SPÉCIAL: maison moderne à toits plats derrière parapets. Depuis le sol, seules les arases de parapet, une pergola à lames et une dalle en porte-à-faux sont visibles. SAM2 capte murs/fenêtre/pergola (peu pertinent). Éléments de type parapet = éclairage au bord SUPÉRIEUR (spec). AMBIGUÏTÉS non tranchées: la pergola à lames et la dalle comptent-elles comme plans à éclairer? À confirmer par le client.",
+  "sam2": {
+    "backend": "sam2_cpu",
+    "checkpoint": "sam2.1_hiera_tiny.pt",
+    "encode_ms_once_per_image": 3732,
+    "embedding_cache_used": true,
+    "n_point_prompts": 4
+  },
+  "review_status": "pilot_sam2_proposal_PENDING_human_review_and_client_confirmation",
+  "human_approved": false
+}

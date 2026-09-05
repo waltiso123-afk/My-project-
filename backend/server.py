@@ -165,6 +165,25 @@ async def raw_merged(dataset_id: str):
     return Response(content=data, media_type="image/png")
 
 
+# ---------------- Deliverables (client review package) ----------------
+@api.get("/deliverables/pilot-5/info")
+async def pilot5_info():
+    doc = await db.deliverables.find_one({"_id": "pilot-5-client-review"}, CLEAN)
+    if not doc:
+        raise HTTPException(404, "pilot-5 package not built")
+    return doc
+
+
+@api.get("/deliverables/pilot-5/download")
+async def pilot5_download():
+    doc = await db.deliverables.find_one({"_id": "pilot-5-client-review"})
+    if not doc:
+        raise HTTPException(404, "pilot-5 package not built")
+    data, _ = await run_in_threadpool(storage.get_object, doc["storage_path"])
+    return Response(content=data, media_type="application/zip",
+                    headers={"Content-Disposition": f'attachment; filename="{doc["filename"]}"'})
+
+
 # ---------------- House groups ----------------
 @api.get("/housegroups")
 async def house_groups(only_multi: bool = Query(False)):

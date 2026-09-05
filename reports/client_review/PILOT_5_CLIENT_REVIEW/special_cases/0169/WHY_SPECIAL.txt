@@ -1,0 +1,1 @@
+Toits plats modernes derrière parapets. Depuis le sol, quasi aucun pan de toit visible (arases de parapet, pergola à lames, dalle en porte-à-faux). SAM2 seul insuffisant -> polygone manuel le long du HAUT du parapet (spec). AMBIGUÏTÉS À CONFIRMER PAR LE CLIENT: la pergola à lames et la dalle comptent-elles comme plans à éclairer? Aucune règle nouvelle n'a été décidée.

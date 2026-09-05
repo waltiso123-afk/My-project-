@@ -1,0 +1,110 @@
+{
+  "image_id": "0173",
+  "original_filename": "b2-005.jpeg",
+  "batch": "batch2",
+  "split": "train",
+  "house_group_id": "HG-0173",
+  "original_dimensions": {
+    "width": 5712,
+    "height": 4284
+  },
+  "display_dimensions": {
+    "width": 5712,
+    "height": 4284
+  },
+  "exif_orientation": 1,
+  "orientation": "landscape",
+  "coordinate_space": "exif_applied_display (masks generated in the pixels the annotator saw)",
+  "roof_plane_count": 4,
+  "planes": [
+    {
+      "plane_id": "plane-01",
+      "internal_name": "upper_tower_hip",
+      "file": "plane-01.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        2530,
+        979
+      ],
+      "sam2_score": 0.452,
+      "sam2_area_fraction": 0.0039,
+      "sam2_predict_ms": 494,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    },
+    {
+      "plane_id": "plane-02",
+      "internal_name": "left_hip",
+      "file": "plane-02.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        1142,
+        1530
+      ],
+      "sam2_score": 0.659,
+      "sam2_area_fraction": 0.0036,
+      "sam2_predict_ms": 500,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    },
+    {
+      "plane_id": "plane-03",
+      "internal_name": "main_lower_hip",
+      "file": "plane-03.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        1632,
+        2081
+      ],
+      "sam2_score": 0.835,
+      "sam2_area_fraction": 0.0176,
+      "sam2_predict_ms": 397,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    },
+    {
+      "plane_id": "plane-04",
+      "internal_name": "right_entry_roof",
+      "file": "plane-04.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        4692,
+        898
+      ],
+      "sam2_score": 0.556,
+      "sam2_area_fraction": 0.0261,
+      "sam2_predict_ms": 408,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    }
+  ],
+  "occlusions_observed": "",
+  "parapets_confirmed": [],
+  "parapet_note": "",
+  "notes_and_ambiguities": "Tuiles: tourelle, croupe gauche, croupe basse (garage) et toit d'entrée droite captés proprement. Pleine résolution 5712×4284, EXIF géré.",
+  "sam2": {
+    "backend": "sam2_cpu",
+    "checkpoint": "sam2.1_hiera_tiny.pt",
+    "encode_ms_once_per_image": 3710,
+    "embedding_cache_used": true,
+    "n_point_prompts": 4
+  },
+  "review_status": "pilot_sam2_proposal_PENDING_human_review_and_client_confirmation",
+  "human_approved": false
+}

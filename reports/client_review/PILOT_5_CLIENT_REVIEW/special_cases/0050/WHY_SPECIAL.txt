@@ -1,0 +1,1 @@
+Occlusion par végétation: le pan gauche du pignon est masqué par un arbre fleuri. Illustre la limite d'occlusion (spec: seuil 15% largeur image) et l'exclusion des villas voisines.

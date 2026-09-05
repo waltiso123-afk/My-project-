@@ -1,0 +1,94 @@
+{
+  "image_id": "0050",
+  "original_filename": "0059.webp",
+  "batch": "batch1",
+  "split": "train",
+  "house_group_id": "HG-0050",
+  "original_dimensions": {
+    "width": 1376,
+    "height": 768
+  },
+  "display_dimensions": {
+    "width": 1376,
+    "height": 768
+  },
+  "exif_orientation": null,
+  "orientation": "landscape",
+  "coordinate_space": "exif_applied_display (masks generated in the pixels the annotator saw)",
+  "roof_plane_count": 3,
+  "planes": [
+    {
+      "plane_id": "plane-01",
+      "internal_name": "left_gable_slope",
+      "file": "plane-01.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        580,
+        258
+      ],
+      "sam2_score": 0.511,
+      "sam2_area_fraction": 0.0132,
+      "sam2_predict_ms": 104,
+      "point_repositioned_during_pilot": true,
+      "repositioned_point_display_xy": [
+        500,
+        240
+      ],
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    },
+    {
+      "plane_id": "plane-02",
+      "internal_name": "right_gable_slope",
+      "file": "plane-02.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        825,
+        270
+      ],
+      "sam2_score": 0.746,
+      "sam2_area_fraction": 0.0126,
+      "sam2_predict_ms": 73,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    },
+    {
+      "plane_id": "plane-03",
+      "internal_name": "garage_hip",
+      "file": "plane-03.png",
+      "generation_method": "sam2_cpu_point_prompt",
+      "sam2_point_prompt_display_xy": [
+        600,
+        352
+      ],
+      "sam2_score": 0.845,
+      "sam2_area_fraction": 0.0092,
+      "sam2_predict_ms": 84,
+      "point_repositioned_during_pilot": false,
+      "repositioned_point_display_xy": null,
+      "manual_human_correction_applied": false,
+      "human_approved": false,
+      "is_parapet_confirmed": false,
+      "parapet_status": "not_applicable"
+    }
+  ],
+  "occlusions_observed": "Pan gauche du pignon occulté par un arbre fleuri (bbox non mesurée -> non inventée).",
+  "parapets_confirmed": [],
+  "parapet_note": "",
+  "notes_and_ambiguities": "Pan droit du pignon + croupe garage bien captés. Pan gauche du pignon OCCULTÉ par un arbre fleuri (le point tombe sur la végétation). Unités latérales = villas voisines, exclues.",
+  "sam2": {
+    "backend": "sam2_cpu",
+    "checkpoint": "sam2.1_hiera_tiny.pt",
+    "encode_ms_once_per_image": 3487,
+    "embedding_cache_used": true,
+    "n_point_prompts": 3
+  },
+  "review_status": "pilot_sam2_proposal_PENDING_human_review_and_client_confirmation",
+  "human_approved": false
+}

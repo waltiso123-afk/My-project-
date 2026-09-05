@@ -1,0 +1,1 @@
+Placement du point déterminant: en 1re passe, tourelle et aile gauche captées sur mur/végétation; repositionnées ensuite sur la tuile (voir *_FIX_*). Illustre la boucle proposition SAM2 -> correction du point.

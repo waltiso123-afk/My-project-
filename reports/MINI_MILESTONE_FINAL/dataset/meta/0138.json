@@ -1,0 +1,69 @@
+{
+  "file": "0138.webp",
+  "occlusions": [
+    {
+      "type": "palm",
+      "bbox": [
+        0.4,
+        0.35,
+        0.62,
+        0.75
+      ],
+      "hides": [
+        "plane-01",
+        "plane-02"
+      ]
+    }
+  ],
+  "parapets": [],
+  "notes": "Long front hip roof. A large palm occludes the centre (>15% image width) so the readable front plane is delivered as two segments (left of palm and right/garage side). Neighbour house at far right excluded.",
+  "view_type": "uncertain",
+  "planes": [
+    {
+      "index": 1,
+      "plane_id": "plane-01",
+      "name": "Plane 1",
+      "file": "plane-01.png",
+      "is_parapet": false,
+      "generation_method": "manual_polygon",
+      "human_corrected": true,
+      "human_approved": true
+    },
+    {
+      "index": 2,
+      "plane_id": "plane-02",
+      "name": "Plane 2",
+      "file": "plane-02.png",
+      "is_parapet": false,
+      "generation_method": "manual_polygon",
+      "human_corrected": true,
+      "human_approved": true
+    },
+    {
+      "index": 3,
+      "plane_id": "plane-03",
+      "name": "Plane 3",
+      "file": "plane-03.png",
+      "is_parapet": false,
+      "generation_method": "sam2_point_prompt",
+      "human_corrected": true,
+      "human_approved": true
+    },
+    {
+      "index": 4,
+      "plane_id": "plane-04",
+      "name": "Plane 4",
+      "file": "plane-04.png",
+      "is_parapet": false,
+      "generation_method": "sam2_point_prompt",
+      "human_corrected": true,
+      "human_approved": true
+    }
+  ],
+  "spec_version": "roofline-labeling-spec-v1",
+  "coordinate_space": "exif_applied_display",
+  "image_size": {
+    "width": 1536,
+    "height": 831
+  }
+}

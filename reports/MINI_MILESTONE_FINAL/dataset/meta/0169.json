@@ -1,0 +1,38 @@
+{
+  "file": "0169.jpeg",
+  "occlusions": [
+    {
+      "type": "palm",
+      "bbox": [
+        0,
+        0.05,
+        0.13,
+        0.4
+      ],
+      "hides": [
+        "plane-02"
+      ]
+    }
+  ],
+  "parapets": [],
+  "notes": "PROVISIONAL / AMBIGUOUS \u2014 flagged for client clarification. Modern flat-roof home behind parapet walls; from ground only parapet caps and a lower canopy slab are visible. Human drew provisional parapet-cap polygons because real local SAM2 cannot separate white-on-white parapet edges. Open questions for the client: (a) does each flat roof behind a parapet count as its own lit plane; (b) is the louvered pergola/trellis a lit element (currently excluded); (c) the lower canopy is lit along the TOP of its dark fascia (top = drip edge), not the fascia bottom. These masks require client sign-off before scaling.",
+  "view_type": "uncertain",
+  "planes": [
+    {
+      "index": 1,
+      "plane_id": "plane-01",
+      "name": "Plane 1",
+      "file": "plane-01.png",
+      "is_parapet": false,
+      "generation_method": "manual_polygon",
+      "human_corrected": true,
+      "human_approved": true
+    }
+  ],
+  "spec_version": "roofline-labeling-spec-v1",
+  "coordinate_space": "exif_applied_display",
+  "image_size": {
+    "width": 3024,
+    "height": 4032
+  }
+}

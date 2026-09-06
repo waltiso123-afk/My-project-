@@ -57,7 +57,14 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
 - 0169 (modern flat roof + parapets) = HARD/AMBIGUOUS: no roof planes visible from ground, only parapet caps → needs full manual polygon along parapet top (-parapet) + client clarification (pergola/cantilever slab).
 - Recommendation: workflow READY to scale on tile pitched roofs; treat flat/parapet homes as a separate manual+clarify track. Agent did NOT mark any as approved/spec-final (human eave-precision gate).
 
-## Mini-Milestone 1 (production format on 5 images) — 2026-06
+## Milestone 1 — HUMAN + SAM2 (NO VLM), redone from scratch — 2026-06 (SUPERSEDES the VLM version)
+- The VLM-assisted Mini-Milestone was REJECTED by the user and is obsolete. Redone with human+SAM2 only.
+- Workflow: human (agent) identifies plane -> human places SAM2 point prompt -> real local SAM2 (CPU, Hiera-Tiny) mask -> human visual validation -> human correction (clip/polygon, e.g. 0050 left slope tightened off the gable wall) -> approve -> ml.generate_and_store (production path). NO Gemini/VLM/auto-detection/auto-points anywhere.
+- Previous VLM annotations purged from DB (annotations deleted, images reset) before redo; final DB annotations: status=approved, workflow "human+sam2 (no VLM)", generation_method human_point_prompt+sam2_cpu+human_qa.
+- Scripts: scripts/hm1_annotate.py (human points + SAM2 + validation overlays), scripts/hm1_package.py (store+export+QA+zip). Output: /app/reports/MILESTONE_1_HUMAN/dataset + PILOT_MILESTONE_1.zip.
+- Plane counts: 0001=3, 0050=3, 0138=2 (palm>15% split), 0173=4, 0169=4 (3 -parapet + 1 canopy, PROVISIONAL/ambiguous, flagged in meta for client). 16 masks total.
+- ZIP: /app/reports/MILESTONE_1_HUMAN/PILOT_MILESTONE_1.zip (9.9MB, sha256 c611a105...), download GET /api/deliverables/milestone-1/download (overwrote deliverable). QA passed (binary, dims, merged==union, originals unchanged, parapet naming/meta consistent, exactly 5 images, no VLM refs). Internal QA report kept OUTSIDE the zip.
+- STOP gate respected: no other images, no 200-run, no checkpoints, no architecture comparison.
 - Architecture executed: VLM reasoning/plan (gemini-3.1-pro-preview via Emergent Universal Key) -> SAM2 (CPU hiera-tiny) point prompts -> clip/reconcile -> agent QA & correction -> REAL production path `ml.generate_and_store` (object storage planes/merged/meta) -> approved annotations in DB.
 - Scripts: scripts/mm1_plan.py, mm1_segment.py, mm1_finalize_masks.py, mm1_store_export.py, mm1_qa_package.py.
 - Output: /app/reports/PILOT_MILESTONE_1/dataset/ (images,planes,merged,meta) + client README; ZIP /app/reports/PILOT_MILESTONE_1/PILOT_MILESTONE_1.zip (9.9MB, sha256 d4a5f18b..., 16 planes over 5 imgs). Internal QA report kept OUTSIDE the zip.

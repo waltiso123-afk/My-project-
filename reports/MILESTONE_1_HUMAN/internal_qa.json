@@ -1,0 +1,51 @@
+{
+  "images": {
+    "0001": {
+      "n_planes": 3,
+      "parapets": [],
+      "size": [
+        1536,
+        1152
+      ]
+    },
+    "0050": {
+      "n_planes": 3,
+      "parapets": [],
+      "size": [
+        1376,
+        768
+      ]
+    },
+    "0138": {
+      "n_planes": 2,
+      "parapets": [],
+      "size": [
+        1536,
+        831
+      ]
+    },
+    "0169": {
+      "n_planes": 4,
+      "parapets": [
+        "plane-01",
+        "plane-02",
+        "plane-03"
+      ],
+      "size": [
+        3024,
+        4032
+      ]
+    },
+    "0173": {
+      "n_planes": 4,
+      "parapets": [],
+      "size": [
+        5712,
+        4284
+      ]
+    }
+  },
+  "issues": [],
+  "passed": true,
+  "total_planes": 16
+}

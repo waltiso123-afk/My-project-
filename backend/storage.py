@@ -14,10 +14,18 @@ def init_storage(force: bool = False):
     global _storage_key
     if _storage_key and not force:
         return _storage_key
-    resp = requests.post(f"{STORAGE_URL}/init", json={"emergent_key": EMERGENT_KEY}, timeout=30)
-    resp.raise_for_status()
-    _storage_key = resp.json()["storage_key"]
-    return _storage_key
+    last = None
+    for attempt in range(6):
+        try:
+            resp = requests.post(f"{STORAGE_URL}/init", json={"emergent_key": EMERGENT_KEY}, timeout=30)
+            if resp.status_code == 200:
+                _storage_key = resp.json()["storage_key"]
+                return _storage_key
+            last = f"{resp.status_code}: {resp.text[:120]}"
+        except requests.exceptions.RequestException as e:
+            last = str(e)
+        time.sleep(1.0 * (attempt + 1))
+    raise RuntimeError(f"storage init failed after retries: {last}")
 
 
 def put_object(path: str, data: bytes, content_type: str) -> dict:

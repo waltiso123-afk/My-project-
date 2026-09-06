@@ -57,7 +57,16 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
 - 0169 (modern flat roof + parapets) = HARD/AMBIGUOUS: no roof planes visible from ground, only parapet caps → needs full manual polygon along parapet top (-parapet) + client clarification (pergola/cantilever slab).
 - Recommendation: workflow READY to scale on tile pitched roofs; treat flat/parapet homes as a separate manual+clarify track. Agent did NOT mark any as approved/spec-final (human eave-precision gate).
 
-## Milestone 1 — HUMAN + SAM2 (NO VLM), redone from scratch — 2026-06 (SUPERSEDES the VLM version)
+## Milestone 1 production prompt (client-approved) — Phase 1 done 2026-06
+- Client approved layout + metadata (generation_method, human_corrected, spec_version, coordinate_space kept). 4/5 pilots approved; 0169 needs correction; scaling authorized.
+- Phase 1 (EXIF/coordinate) DONE: scripts/normalize_exif_upright.py re-stored images UPRIGHT (EXIF applied+stripped) so file dims==display==mask. Only 0169 changed (4032x3024 -> 3024x4032, exif_orientation=1). Verified: all 5 file==mask. pipeline.py ingestion now stores upright via _to_upright() for all future images (coordinate_policy="upright_normalized", original_raw_size kept for provenance). storage.init_storage hardened with retries.
+- Phase 4: 0001 = user's 4 planes; far-left tiled roof confirmed NEIGHBOUR -> left unmasked (unchanged).
+- Studio supports Phase 2: per-plane `-parapet` checkbox + occlusion box tool already present.
+- REMAINING (human-in-the-loop, agent must NOT auto-annotate):
+  - Phase 2: user manually corrects 0169 in Studio -> 4 parapet planes (tall left block, center block, wide overhang above garage, right block), each is_parapet -> -parapet suffix + parapets[] in meta. Then agent rebuilds zip + QA.
+  - Phase 5: user annotates remaining ~200 images in Studio in batches; agent packages/QA per batch.
+  - Phase 6: at 50 & 100 approved labels, agent builds SegFormer-B0 baseline + holdout curve (no hidden 30-set, no fabricated metrics).
+- Current deliverable (milestone-1) still reflects pre-parapet 0169 (1 plane) — will rebuild after user's 0169 correction.
 - The VLM-assisted Mini-Milestone was REJECTED by the user and is obsolete. Redone with human+SAM2 only.
 - Workflow: human (agent) identifies plane -> human places SAM2 point prompt -> real local SAM2 (CPU, Hiera-Tiny) mask -> human visual validation -> human correction (clip/polygon, e.g. 0050 left slope tightened off the gable wall) -> approve -> ml.generate_and_store (production path). NO Gemini/VLM/auto-detection/auto-points anywhere.
 - Previous VLM annotations purged from DB (annotations deleted, images reset) before redo; final DB annotations: status=approved, workflow "human+sam2 (no VLM)", generation_method human_point_prompt+sam2_cpu+human_qa.

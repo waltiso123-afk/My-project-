@@ -6,6 +6,7 @@ actual image files and stored in MongoDB + dataset_index.csv.
 """
 import csv
 import hashlib
+import io
 import os
 from datetime import datetime, timezone
 
@@ -64,6 +65,18 @@ def _validate_image(path):
                 "mode": None, "exif_orientation": None, "exif_transposed": False, "reason": str(e)}
 
 
+def _to_upright(raw: bytes, ext: str):
+    """Phase 1: return EXIF-applied, EXIF-stripped UPRIGHT image bytes + dims so the stored
+    production file matches the display/mask coordinate space (file space == display space)."""
+    fmt = {"jpg": "JPEG", "jpeg": "JPEG", "png": "PNG", "webp": "WEBP"}.get(ext.lower(), "JPEG")
+    im = ImageOps.exif_transpose(Image.open(io.BytesIO(raw)))
+    if fmt in ("JPEG", "WEBP"):
+        im = im.convert("RGB")
+    buf = io.BytesIO()
+    im.save(buf, format=fmt, **({"quality": 95} if fmt in ("JPEG", "WEBP") else {}))
+    return buf.getvalue(), im.width, im.height
+
+
 def run_ingest(log=print):
     db = _db()
     files = _collect_files()
@@ -101,10 +114,13 @@ def run_ingest(log=print):
         uploaded = existing.get("storage_uploaded") if existing else False
         sp = config.img_path(dataset_id, ext)
         upload_error = None
+        store_w, store_h, exif_norm = w, h, 1
+        orig_raw_size = [v["raw_w"], v["raw_h"]]
         if ok and not uploaded:
             ct = config.MIME_TYPES.get(ext, "application/octet-stream")
             try:
-                storage.put_object(sp, raw, ct)
+                up_bytes, store_w, store_h = _to_upright(raw, ext)  # Phase 1: store upright
+                storage.put_object(sp, up_bytes, ct)
                 uploaded = True
             except Exception as e:
                 upload_error = str(e)
@@ -120,9 +136,11 @@ def run_ingest(log=print):
             "storage_uploaded": uploaded,
             "upload_error": upload_error,
             "width": w, "height": h, "mode": v["mode"],
-            "raw_width": v["raw_w"], "raw_height": v["raw_h"],
-            "exif_orientation": v["exif_orientation"],
+            "raw_width": store_w, "raw_height": store_h,
+            "exif_orientation": exif_norm,
             "exif_transposed": v["exif_transposed"],
+            "coordinate_policy": "upright_normalized",
+            "original_raw_size": orig_raw_size,
             "orientation": orientation,
             "file_size_bytes": len(raw),
             "sha1": sha,

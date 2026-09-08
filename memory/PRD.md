@@ -87,3 +87,12 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
 - P1: Scale annotation 50 → 100 → 150 → 200 on the fixed split.
 - P2: SegFormer-B0 baseline (BCE+Dice), geometric eval on holdout, holdout_error_curve.csv/.png.
 - P2: Split server.py into per-resource routers.
+
+
+## Milestone 1 — Step 1 checkpoint (baseline 50 vs 100) — 2026-06 DONE
+- Validations: 0169 parapets PASS (4 -parapet planes, meta.parapets set, 3024x4032 file=mask, EXIF=1; is_parapet flag set on human planes w/ user auth), coordinate PASS (upright_normalized), 0001 neighbour excluded PASS. 101 approved; 7 images carry parapet planes (0020,0021,0024,0030,0053,0072,0169) per user.
+- Frozen split: group-aware, holdout=13 (split=holdout, house-group leak NONE), train pool=88. baseline_50 (50 imgs) strict subset of baseline_100 (88 = max non-holdout; literal 100 impossible with 101 total; real count reported).
+- Model: SegFormer-B0 (nvidia/mit-b0) binary roof seg, 256px, CPU, 18 epochs, AdamW 6e-5, weighted CE. transformers==4.46.3 (torch 2.5.1 compat).
+- REAL holdout metrics: baseline_50 dice=0.687 iou=0.523 perp=0.0161 cov=0.793 ; baseline_100 dice=0.719 iou=0.562 perp=0.0150 cov=0.874. Trend=IMPROVING -> safe to continue toward 150.
+- Roofline metric is a mask-derived proxy (per-column lowest roof edge); client marked-polyline + hidden 30-set NOT accessed (stated). No fabricated numbers. No VLM.
+- Deliverable: /app/reports/milestone1_step1.zip (sha 28d9709e..., 28.5MB, incl report, curve, metrics_50/100.json, training_config.json, qualitative/, models/baseline_50.pt & baseline_100.pt). Download: GET /api/deliverables/milestone1-step1/download. Scripts: scripts/train_step1.py, package_step1.py, step1_validate.py.

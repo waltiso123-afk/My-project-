@@ -202,6 +202,24 @@ async def milestone1_download():
                     headers={"Content-Disposition": f'attachment; filename="{doc["filename"]}"'})
 
 
+@api.get("/deliverables/milestone1-step1/info")
+async def m1s1_info():
+    doc = await db.deliverables.find_one({"_id": "milestone1-step1"}, CLEAN)
+    if not doc:
+        raise HTTPException(404, "milestone1-step1 not built")
+    return doc
+
+
+@api.get("/deliverables/milestone1-step1/download")
+async def m1s1_download():
+    doc = await db.deliverables.find_one({"_id": "milestone1-step1"})
+    if not doc:
+        raise HTTPException(404, "milestone1-step1 not built")
+    data, _ = await run_in_threadpool(storage.get_object, doc["storage_path"])
+    return Response(content=data, media_type="application/zip",
+                    headers={"Content-Disposition": f'attachment; filename="{doc["filename"]}"'})
+
+
 # ---------------- House groups ----------------
 @api.get("/housegroups")
 async def house_groups(only_multi: bool = Query(False)):

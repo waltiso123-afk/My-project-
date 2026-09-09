@@ -1,0 +1,75 @@
+{
+  "name": "milestone1_checkpoint_v2_768_per_plane",
+  "supersedes_methodology_of": "milestone1_step1_256_binary_baseline",
+  "status": "PREPARED — NOT TRAINED (awaiting explicit approval + GPU per 768 benchmark)",
+  "workflow": "Human + SAM2 only (no VLM)",
+
+  "training": {
+    "model": "SegFormer-B0 (nvidia/mit-b0)",
+    "input_resolution": 768,
+    "batch_size": {"cpu": 1, "gpu_recommended": 4, "gpu_max_16gb": 8},
+    "epochs": 18,
+    "optimizer": "AdamW, lr=6e-5, weight_decay=1e-4",
+    "loss": "weighted cross-entropy [bg=1, roof=3] (Dice term optional add-on)",
+    "seed": 0,
+    "device": "cuda (recommended) — CPU impractical at 768, see hardware"
+  },
+
+  "dataset": {
+    "target_labeled_images": 150,
+    "currently_available_approved": 101,
+    "note": "When ~150 labels exist, use approved minus the FIXED holdout. Holdout stays identical for 50/100/150 comparability.",
+    "train_pool": "approved images with split in (train,val)",
+    "holdout_fixed_group_aware": true,
+    "holdout_ids": ["0016","0023","0031","0032","0037","0044","0051","0054","0058","0064","0085","0120","0138"],
+    "holdout_count": 13,
+    "train_pool_count_current": 88,
+    "group_separation": "house_group_id kept whole; train/holdout house-group leakage = NONE (verified)"
+  },
+
+  "evaluation": {
+    "granularity": "PER-PLANE (primary) — each plane-0N[-parapet].png evaluated individually; merged mask kept only as a secondary diagnostic",
+    "parapet_handling": {
+      "source": "-parapet filename suffix AND meta.parapets array",
+      "parapet_plane_boundary": "UPPER parapet edge (min-y per column)",
+      "normal_plane_boundary": "LOWER eave edge (max-y per column)"
+    },
+    "metrics": {
+      "mean_perpendicular_roofline_error_normalized_by_image_width": "PRIMARY",
+      "horizontal_roofline_coverage": "SECONDARY diagnostic",
+      "dice": "segmentation diagnostic only (NOT selection)",
+      "iou": "segmentation diagnostic only (NOT selection)",
+      "n_valid_plane_instances": "reported"
+    }
+  },
+
+  "checkpoint_selection": {
+    "primary_metric": "mean_perpendicular_roofline_error_normalized_by_image_width",
+    "primary_direction": "MINIMIZE",
+    "secondary_metric": "horizontal_roofline_coverage",
+    "secondary_direction": "MAXIMIZE",
+    "diagnostics_not_used_for_selection": ["dice", "iou"],
+    "rule": "Select the epoch with the lowest per-plane mean perpendicular roofline error on the fixed holdout; break ties by higher horizontal coverage. Dice/IoU are reported but MUST NOT drive selection."
+  },
+
+  "hardware": {
+    "benchmark_cpu": {
+      "cores": 4,
+      "res256_bs2_train_s_per_img": 0.34,
+      "res768_bs1_train_s_per_img": 3.74,
+      "res768_bs2_train_s_per_img": 3.51,
+      "res768_bs2_infer_s_per_img": 0.93,
+      "res768_bs2_peak_rss_mb": 3214
+    },
+    "estimated_cpu_150img_768_checkpoint_hours": 2.6,
+    "cpu_verdict": "IMPRACTICAL for iterative 150-image checkpoints at 768 (~2.6 h per single run, 4 cores)",
+    "gpu_recommendation": {
+      "min": "NVIDIA T4 (16 GB)",
+      "recommended": "NVIDIA L4 / A10 (24 GB)",
+      "estimated_vram_768_bs8": "6-8 GB",
+      "expected_speedup_vs_cpu": "~50-100x (150-img epoch from ~9 min CPU to a few seconds GPU; full checkpoint minutes not hours)",
+      "pipeline_ready_for_gpu": true,
+      "porting": "device-agnostic; set device='cuda', model.to(device), tensors.to(device), increase batch_size"
+    }
+  }
+}

@@ -96,3 +96,10 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
 - REAL holdout metrics: baseline_50 dice=0.687 iou=0.523 perp=0.0161 cov=0.793 ; baseline_100 dice=0.719 iou=0.562 perp=0.0150 cov=0.874. Trend=IMPROVING -> safe to continue toward 150.
 - Roofline metric is a mask-derived proxy (per-column lowest roof edge); client marked-polyline + hidden 30-set NOT accessed (stated). No fabricated numbers. No VLM.
 - Deliverable: /app/reports/milestone1_step1.zip (sha 28d9709e..., 28.5MB, incl report, curve, metrics_50/100.json, training_config.json, qualitative/, models/baseline_50.pt & baseline_100.pt). Download: GET /api/deliverables/milestone1-step1/download. Scripts: scripts/train_step1.py, package_step1.py, step1_validate.py.
+
+## Checkpoint v2 (768, per-plane) — PREPARED (not trained) 2026-06
+- 768 CPU benchmark (4 cores): 768 bs2 train 3.51 s/img (~10x slower than 256), infer 0.93 s/img, peak 3.2GB. Est 150-img@768 checkpoint ~2.6h/run on CPU -> IMPRACTICAL. Recommend GPU T4(16GB) min / L4-A10(24GB); ~50-100x speedup; pipeline device-agnostic ready.
+- Per-plane eval prepared (scripts/per_plane_eval.py), parapet-aware (upper boundary for -parapet, lower eave else). Dry-run holdout(13, baseline_100): per-plane perp 0.02445 normwidth, coverage 0.917, 53 plane instances (0 parapet in holdout). Note: binary Step1 model can't predict instances; GT per-plane framework complete, per-plane prediction needs instance/multiclass head in v2.
+- Selection: PRIMARY mean perpendicular roofline error (minimize); SECONDARY coverage; Dice/IoU diagnostics only.
+- Holdout preserved (same 13 group-aware ids, leak NONE). Config: reports/milestone1_checkpoint_v2_768_per_plane/config.json + V2_METHODOLOGY_REPORT.md.
+- Step 1 preserved as reports/milestone1_step1_256_binary_baseline. NO annotations modified. No long training started (awaiting approval + GPU).

@@ -1,0 +1,176 @@
+{
+  "tag": "baseline_50",
+  "n_train": 50,
+  "epochs": 18,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6121,
+      "iou": 0.2037,
+      "dice": 0.3384,
+      "mean_perp_roofline_err_normwidth": 0.07041,
+      "horizontal_coverage": 0.9169,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.514,
+      "iou": 0.283,
+      "dice": 0.4412,
+      "mean_perp_roofline_err_normwidth": 0.05606,
+      "horizontal_coverage": 0.8915,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.4379,
+      "iou": 0.3724,
+      "dice": 0.5427,
+      "mean_perp_roofline_err_normwidth": 0.03298,
+      "horizontal_coverage": 0.7639,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.3708,
+      "iou": 0.3879,
+      "dice": 0.559,
+      "mean_perp_roofline_err_normwidth": 0.03522,
+      "horizontal_coverage": 0.7286,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.3255,
+      "iou": 0.4256,
+      "dice": 0.5971,
+      "mean_perp_roofline_err_normwidth": 0.02675,
+      "horizontal_coverage": 0.7005,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.2808,
+      "iou": 0.4592,
+      "dice": 0.6294,
+      "mean_perp_roofline_err_normwidth": 0.02079,
+      "horizontal_coverage": 0.6478,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.2515,
+      "iou": 0.4289,
+      "dice": 0.6003,
+      "mean_perp_roofline_err_normwidth": 0.02567,
+      "horizontal_coverage": 0.8151,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.2248,
+      "iou": 0.4842,
+      "dice": 0.6524,
+      "mean_perp_roofline_err_normwidth": 0.01807,
+      "horizontal_coverage": 0.7229,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.2038,
+      "iou": 0.4819,
+      "dice": 0.6504,
+      "mean_perp_roofline_err_normwidth": 0.01281,
+      "horizontal_coverage": 0.6153,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.1869,
+      "iou": 0.5033,
+      "dice": 0.6696,
+      "mean_perp_roofline_err_normwidth": 0.01662,
+      "horizontal_coverage": 0.7727,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.1757,
+      "iou": 0.5034,
+      "dice": 0.6697,
+      "mean_perp_roofline_err_normwidth": 0.01254,
+      "horizontal_coverage": 0.6854,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.1622,
+      "iou": 0.4906,
+      "dice": 0.6583,
+      "mean_perp_roofline_err_normwidth": 0.01239,
+      "horizontal_coverage": 0.6428,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.1543,
+      "iou": 0.5184,
+      "dice": 0.6828,
+      "mean_perp_roofline_err_normwidth": 0.01436,
+      "horizontal_coverage": 0.7218,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.142,
+      "iou": 0.5187,
+      "dice": 0.683,
+      "mean_perp_roofline_err_normwidth": 0.01408,
+      "horizontal_coverage": 0.7152,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.1343,
+      "iou": 0.4944,
+      "dice": 0.6617,
+      "mean_perp_roofline_err_normwidth": 0.01318,
+      "horizontal_coverage": 0.6762,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.1308,
+      "iou": 0.5231,
+      "dice": 0.6869,
+      "mean_perp_roofline_err_normwidth": 0.01605,
+      "horizontal_coverage": 0.7931,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.1211,
+      "iou": 0.5005,
+      "dice": 0.6671,
+      "mean_perp_roofline_err_normwidth": 0.01294,
+      "horizontal_coverage": 0.7365,
+      "n_holdout": 13
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.1134,
+      "iou": 0.4747,
+      "dice": 0.6438,
+      "mean_perp_roofline_err_normwidth": 0.01446,
+      "horizontal_coverage": 0.7129,
+      "n_holdout": 13
+    }
+  ],
+  "best_holdout": {
+    "iou": 0.5231,
+    "dice": 0.6869,
+    "mean_perp_roofline_err_normwidth": 0.01605,
+    "horizontal_coverage": 0.7931,
+    "n_holdout": 13
+  }
+}

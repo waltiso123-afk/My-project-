@@ -33,6 +33,7 @@ export const propose = (body) => ax.post("/ml/propose", body).then((r) => r.data
 export const getQaScripts = () => ax.get("/qa/scripts").then((r) => r.data);
 
 export const rawImageUrl = (id) => `${API}/images/${id}/raw`;
+export const thumbUrl = (id, w = 400) => `${API}/images/${id}/thumb?w=${w}`;
 export const mergedMaskUrl = (id) => `${API}/merged/${id}/raw`;
 
 export const PLANE_COLORS = [

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Search, PenTool, CircleDot } from "lucide-react";
-import { listDataset, rawImageUrl } from "@/lib/api";
+import { listDataset, thumbUrl } from "@/lib/api";
 
 const STATUS = {
   pending: { dot: "bg-amber-400", text: "text-amber-300", bg: "bg-amber-950/60 border-amber-500/40" },
@@ -76,9 +76,10 @@ export default function DatasetGallery({ onAnnotate }) {
               >
                 <div className="aspect-[4/3] bg-slate-900 overflow-hidden">
                   <img
-                    src={rawImageUrl(r.dataset_id)}
+                    src={thumbUrl(r.dataset_id)}
                     alt={r.dataset_id}
                     loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>

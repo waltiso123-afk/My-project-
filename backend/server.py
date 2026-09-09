@@ -4,8 +4,11 @@ from fastapi.concurrency import run_in_threadpool
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+import io
 import logging
+from pathlib import Path
 from datetime import datetime, timezone
+from PIL import Image
 
 import config
 import storage
@@ -144,6 +147,40 @@ async def raw_image(dataset_id: str):
         raise HTTPException(404, "image not found")
     data, ct = await run_in_threadpool(storage.get_object, img["storage_path"])
     return Response(content=data, media_type=img.get("content_type") or ct)
+
+
+_THUMB_DIR = Path("/tmp/roofline_thumbs")
+_THUMB_DIR.mkdir(exist_ok=True)
+
+
+@api.get("/images/{dataset_id}/thumb")
+async def thumb_image(dataset_id: str, w: int = Query(400)):
+    """Lightweight gallery preview only. The annotation studio still loads the
+    full-resolution original via /raw — coordinate precision is untouched."""
+    w = max(64, min(w, 800))
+    cache_file = _THUMB_DIR / f"{dataset_id}_{w}.jpg"
+    if cache_file.exists():
+        return Response(content=cache_file.read_bytes(), media_type="image/jpeg",
+                        headers={"Cache-Control": "public, max-age=86400"})
+    img = await db.images.find_one({"dataset_id": dataset_id}, {"_id": 0, "storage_path": 1})
+    if not img:
+        raise HTTPException(404, "image not found")
+    data, _ = await run_in_threadpool(storage.get_object, img["storage_path"])
+
+    def _make():
+        im = Image.open(io.BytesIO(data)).convert("RGB")
+        im.thumbnail((w, 100000), Image.BILINEAR)
+        buf = io.BytesIO()
+        im.save(buf, "JPEG", quality=72)
+        return buf.getvalue()
+
+    out = await run_in_threadpool(_make)
+    try:
+        cache_file.write_bytes(out)
+    except Exception:
+        pass
+    return Response(content=out, media_type="image/jpeg",
+                    headers={"Cache-Control": "public, max-age=86400"})
 
 
 @api.get("/masks/{dataset_id}/{plane_file}")

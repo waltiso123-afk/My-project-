@@ -103,3 +103,11 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
 - Selection: PRIMARY mean perpendicular roofline error (minimize); SECONDARY coverage; Dice/IoU diagnostics only.
 - Holdout preserved (same 13 group-aware ids, leak NONE). Config: reports/milestone1_checkpoint_v2_768_per_plane/config.json + V2_METHODOLOGY_REPORT.md.
 - Step 1 preserved as reports/milestone1_step1_256_binary_baseline. NO annotations modified. No long training started (awaiting approval + GPU).
+
+## v2 per-plane MODELING POC (256 CPU, diagnostic — no long/768 run) — DONE 2026-06
+- Goal (user): validate WHICH output formulation actually recovers INDIVIDUAL plane instances + correct eave/parapet boundaries, before GPU/150@768. 256px numbers are diagnostic, NOT acceptance metrics. Read-only: annotations + fixed 13-holdout untouched. Human+SAM2 only.
+- Script scripts/poc_perplane.py; output reports/milestone1_v2_per_plane_POC/ (POC_REPORT.md, poc_results.json, overlays/ 18 imgs). Added scikit-image to requirements.
+- Compared on 13-holdout (54 GT planes): A binary+CC recovery 0.516 (6 merges); A binary+watershed recovery 0.629 (8 merges, over-splits, IoU/cov drop); B 3-class edge-aware (8 ep quick) recovery 0.397. Mask2Former = conceptual analysis only.
+- Finding: NO lightweight semantic formulation preserves instances (best ~63%, frequent adjacent-plane merges — see overlays/0031). Parapet: GT UPPER-boundary extraction WORKS (0169 red polyline correct) BUT binary model predicts ~nothing on flat/parapet roofs (0020/0021 no match, 0169 cov~0) → parapet plane is intrinsically a distinct instance/class, not a binary-roof subcase.
+- RECOMMENDATION for 150@768: PRIMARY = Mask2Former INSTANCE seg, 2 categories {roof_plane, parapet_plane}, Swin-T/S, 768 GPU. Compatible w/o re-labeling (our per-plane masks + `-parapet` flag ARE instance-seg GT); aligns w/ client per-plane perp-error+coverage metric (per_plane_eval.py reused at instance level); handles variable 2-8 planes; Hungarian match = its train objective + our eval. FALLBACK = SegFormer 3-class edge-aware trained more @768 (POC shows not yet reliable). REJECT binary+CC/watershed and fixed-channel multiclass.
+- Blocked next: GPU (T4/L4/A10) + reach ~150 labels, then fine-tune Mask2Former-instance @768, evaluate per-plane parapet-aware on frozen holdout.

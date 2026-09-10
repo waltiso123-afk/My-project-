@@ -1,8 +1,8 @@
-/* global ort */
 /* Real-browser onnxruntime-web test for SegFormer-B0 @768 binary export.
    Loads the actual .onnx, builds a 768x768x3 input, runs ONE forward pass,
    reports output shape/dtype + execution provider, and converts logits->binary mask. */
 (function () {
+  const ort = window.ort; // provided by the onnxruntime-web CDN <script> tag
   const logEl = document.getElementById("log");
   const statusEl = document.getElementById("status");
   const lines = [];

@@ -126,3 +126,8 @@ excluded, geometric quality prioritized (perpendicular error ≤1% img width, �
 - Downstream verify: binary mask→CC→per-plane→roofline. 0016 normal→eave LOWER; 0169 parapet(4)→UPPER via -parapet flag. Both branches execute. Primary=perp err (MIN), secondary=coverage, dice/iou diagnostic only. Runs on untrained ONNX output too.
 - Data integrity read-only: sha256 before==after (15e559bb...), 150 approved + frozen-13 holdout intact, nothing modified.
 - SegFormer-B0 @768 CPU measured: 3.59s/img train step, 1.24s infer. GPU est real 150 run: T4/L4 ~1-3h, ~$1-3 total (<<$50). NO GPU rented, NO training. GATE CLEARED for GPU stage.
+
+## SegFormer-B0 @768 TRAINING SMOKE TEST — PASS 2026-06
+- Reused scripts/train_step1.py verbatim (model/loss/eval/config), only RES 256→768, tiny subset, 2 epochs, +val-loss +reload/inference. Script scripts/smoke_768_segformer.py; report reports/milestone1_v2_768_segformer_smoke/ (SMOKE_TEST_REPORT.md, smoke_results.json, models/smoke_best.pt).
+- SegFormer-B0 nvidia/mit-b0 num_labels=2 (0 bg,1 roof), 768x768, AdamW 6e-5 wd1e-4, weighted CE [1,3], seed0, CPU, bs2. Subset: train 0001-0010, val (holdout) 0016,0023,0031.
+- 13/13 stages PASS: pre-integrity (model/res/frozen13/no-leak) → load768 → init → 2 epochs+val → checkpoint save → reload → inference from ckpt → post-integrity. ep1 train0.6555/val0.6751 dice0.130; ep2 train0.5883/val0.6481 dice0.193. Runtime 110.7s, peak 3321MB. Inference logits (1,2,768,768)→binary{0,1}. Annotations hash before==after; frozen-13 intact. SMOKE ONLY (accuracy not meaningful).

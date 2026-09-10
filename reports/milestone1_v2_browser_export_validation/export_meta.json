@@ -1,0 +1,71 @@
+{
+  "python": "3.11.16",
+  "torch": "2.5.1",
+  "transformers": "4.46.3",
+  "onnx": "1.22.0",
+  "onnxruntime_python": "1.29.0",
+  "opset": 17,
+  "input_name": "pixel_values",
+  "output_name": "logits",
+  "export_command": "torch.onnx.export(model, dummy, ONNX_PATH, opset_version=17, input_names=['pixel_values'], output_names=['logits'], dynamic_axes=None  # STATIC 1x3x768x768 for browser)",
+  "onnx_file_size_bytes": 15013044,
+  "onnx_file_size_mb": 15.01,
+  "input": {
+    "name": "pixel_values",
+    "dtype": "FLOAT",
+    "shape": [
+      1,
+      3,
+      768,
+      768
+    ]
+  },
+  "output": {
+    "name": "logits",
+    "dtype": "FLOAT",
+    "shape": [
+      1,
+      2,
+      768,
+      768
+    ]
+  },
+  "dynamic_axes": "none (static 1x3x768x768 in / 1x2x768x768 out)",
+  "operators": {
+    "Identity": 4,
+    "Conv": 20,
+    "Shape": 21,
+    "Constant": 176,
+    "Slice": 21,
+    "Concat": 22,
+    "Reshape": 76,
+    "Transpose": 76,
+    "LayerNormalization": 30,
+    "MatMul": 68,
+    "Add": 76,
+    "Div": 16,
+    "Softmax": 8,
+    "Erf": 8,
+    "Mul": 16,
+    "Resize": 5,
+    "Relu": 1
+  },
+  "operators_not_in_known_wasm_set": [],
+  "py_ort_output_shape": [
+    1,
+    2,
+    768,
+    768
+  ],
+  "py_ort_output_dtype": "float32",
+  "binary_mask_from_logits": {
+    "shape": [
+      768,
+      768
+    ],
+    "values": [
+      0,
+      1
+    ]
+  }
+}

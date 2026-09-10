@@ -1,0 +1,175 @@
+{
+  "note": "Downstream consumes BINARY SegFormer mask via connected components (no NN instance seg). Accuracy irrelevant (model untrained); goal = path executes + boundary branches + metric order.",
+  "cases": [
+    {
+      "image": "0016",
+      "n_parapet_planes": 0,
+      "on_GT_binary": {
+        "source": "0016:binary_roof_mask(GT_union)",
+        "n_cc_instances": 5,
+        "n_gt_planes": 3,
+        "matched": 3,
+        "mean_perp_err_normwidth_PRIMARY": 0.0,
+        "mean_coverage_SECONDARY": 0.8015,
+        "planes": [
+          {
+            "gt_plane": "plane-01.png",
+            "boundary": "LOWER_eave",
+            "matched_instance": 2,
+            "match_iou": 0.6649,
+            "perp_err_normwidth": 0.0,
+            "coverage": 0.6328
+          },
+          {
+            "gt_plane": "plane-02.png",
+            "boundary": "LOWER_eave",
+            "matched_instance": 3,
+            "match_iou": 0.875,
+            "perp_err_normwidth": 0.0,
+            "coverage": 0.7717
+          },
+          {
+            "gt_plane": "plane-03.png",
+            "boundary": "LOWER_eave",
+            "matched_instance": 4,
+            "match_iou": 1.0,
+            "perp_err_normwidth": 0.0,
+            "coverage": 1.0
+          }
+        ]
+      },
+      "on_ONNX_binary": {
+        "source": "0016:ONNX_SegFormer_binary_output(untrained)",
+        "n_cc_instances": 17,
+        "n_gt_planes": 3,
+        "matched": 3,
+        "mean_perp_err_normwidth_PRIMARY": 0.33957,
+        "mean_coverage_SECONDARY": 0.4187,
+        "planes": [
+          {
+            "gt_plane": "plane-01.png",
+            "boundary": "LOWER_eave",
+            "matched_instance": 2,
+            "match_iou": 0.0,
+            "perp_err_normwidth": null,
+            "coverage": 0.0
+          },
+          {
+            "gt_plane": "plane-02.png",
+            "boundary": "LOWER_eave",
+            "matched_instance": 10,
+            "match_iou": 0.0035,
+            "perp_err_normwidth": 0.6694,
+            "coverage": 1.0
+          },
+          {
+            "gt_plane": "plane-03.png",
+            "boundary": "LOWER_eave",
+            "matched_instance": 11,
+            "match_iou": 0.0836,
+            "perp_err_normwidth": 0.00973,
+            "coverage": 0.2561
+          }
+        ]
+      }
+    },
+    {
+      "image": "0169",
+      "n_parapet_planes": 4,
+      "on_GT_binary": {
+        "source": "0169:binary_roof_mask(GT_union)",
+        "n_cc_instances": 5,
+        "n_gt_planes": 4,
+        "matched": 4,
+        "mean_perp_err_normwidth_PRIMARY": 8e-05,
+        "mean_coverage_SECONDARY": 0.434,
+        "planes": [
+          {
+            "gt_plane": "plane-01-parapet.png",
+            "boundary": "UPPER_parapet",
+            "matched_instance": 2,
+            "match_iou": 0.0,
+            "perp_err_normwidth": null,
+            "coverage": 0.0
+          },
+          {
+            "gt_plane": "plane-02-parapet.png",
+            "boundary": "UPPER_parapet",
+            "matched_instance": 0,
+            "match_iou": 0.8046,
+            "perp_err_normwidth": 0.0,
+            "coverage": 0.6349
+          },
+          {
+            "gt_plane": "plane-03-parapet.png",
+            "boundary": "UPPER_parapet",
+            "matched_instance": 1,
+            "match_iou": 0.8866,
+            "perp_err_normwidth": 0.00025,
+            "coverage": 0.8903
+          },
+          {
+            "gt_plane": "plane-04-parapet.png",
+            "boundary": "UPPER_parapet",
+            "matched_instance": 4,
+            "match_iou": 0.2107,
+            "perp_err_normwidth": 0.0,
+            "coverage": 0.2107
+          }
+        ]
+      },
+      "on_ONNX_binary": {
+        "source": "0169:ONNX_SegFormer_binary_output(untrained)",
+        "n_cc_instances": 24,
+        "n_gt_planes": 4,
+        "matched": 4,
+        "mean_perp_err_normwidth_PRIMARY": 0.02506,
+        "mean_coverage_SECONDARY": 0.1724,
+        "planes": [
+          {
+            "gt_plane": "plane-01-parapet.png",
+            "boundary": "UPPER_parapet",
+            "matched_instance": 0,
+            "match_iou": 0.0,
+            "perp_err_normwidth": null,
+            "coverage": 0.0
+          },
+          {
+            "gt_plane": "plane-02-parapet.png",
+            "boundary": "UPPER_parapet",
+            "matched_instance": 3,
+            "match_iou": 0.0337,
+            "perp_err_normwidth": 0.04011,
+            "coverage": 0.1286
+          },
+          {
+            "gt_plane": "plane-03-parapet.png",
+            "boundary": "UPPER_parapet",
+            "matched_instance": 5,
+            "match_iou": 0.0612,
+            "perp_err_normwidth": 0.02564,
+            "coverage": 0.2323
+          },
+          {
+            "gt_plane": "plane-04-parapet.png",
+            "boundary": "UPPER_parapet",
+            "matched_instance": 13,
+            "match_iou": 0.0132,
+            "perp_err_normwidth": 0.00943,
+            "coverage": 0.3286
+          }
+        ]
+      }
+    }
+  ],
+  "checkpoint_selection_rule": {
+    "primary": "mean_perpendicular_roofline_error_normalized_by_width (MINIMIZE)",
+    "secondary": "horizontal_coverage (tie-break)",
+    "dice_iou": "diagnostic only \u2014 NOT used for selection",
+    "location": "downstream of the binary model (unchanged client scoring logic)"
+  },
+  "boundary_branches_executed": {
+    "normal_eave_lower": true,
+    "parapet_upper": true
+  }
+}

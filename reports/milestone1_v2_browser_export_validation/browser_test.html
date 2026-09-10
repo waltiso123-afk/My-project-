@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SegFormer-B0 768 — onnxruntime-web browser test</title>
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+  <style>
+    body{font-family:ui-monospace,Menlo,Consolas,monospace;background:#0b0f14;color:#d7e3ee;padding:24px;line-height:1.5}
+    h1{font-size:18px;color:#7ee0c0}
+    pre{background:#111823;border:1px solid #22303f;border-radius:8px;padding:16px;white-space:pre-wrap}
+    .ok{color:#7ee0c0}.fail{color:#ff7a7a}.warn{color:#ffcf6b}
+    #status{font-size:16px;margin:12px 0}
+  </style>
+</head>
+<body>
+  <h1>SegFormer-B0 @768 · ONNX · onnxruntime-web (real browser)</h1>
+  <div id="status" data-testid="onnx-status">BOOTING…</div>
+  <pre id="log" data-testid="onnx-log"></pre>
+  <script src="./browser_test.js"></script>
+</body>
+</html>

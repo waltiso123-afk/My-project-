@@ -82,3 +82,4 @@ memory/test_credentials.md
 android-sdk/data/downloads/batch2.zip
 data/downloads/batch2.zip
 models/sam2.1_hiera_tiny.pt
+reports/milestone1_v2_768_smoke_test/smoke_ckpt/model.safetensors

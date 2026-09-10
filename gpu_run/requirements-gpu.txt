@@ -1,0 +1,12 @@
+# Validated versions (match our local environment). On RunPod, START from a container that
+# already ships torch 2.5.1 + CUDA 12.1 (see plan). Only install the rest on top.
+#
+# If torch is NOT preinstalled in the container, install the CUDA build FIRST:
+#   pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/cu121
+#
+transformers==4.46.3
+onnx==1.22.0
+onnxruntime==1.29.0
+numpy==1.26.4
+pillow==10.4.0
+safetensors>=0.4.5
